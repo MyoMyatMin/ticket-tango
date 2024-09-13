@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 
 const TheatreSchema = new mongoose.Schema({
     name: {
-        type: Date,
+        type: String,
         required: true,
     },
     total_seat: {

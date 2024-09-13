@@ -14,8 +14,9 @@ const SeatSchema = new mongoose.Schema({
     isAvailable: {
         type: Boolean,
         required: true,
+        default: true,
     },
-    theatreId: {
+    theatre: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Theatre',
         required: true,
