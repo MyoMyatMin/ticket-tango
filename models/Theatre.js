@@ -6,11 +6,11 @@ const TheatreSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    total_seat: {
-        type: Number,
-        required: true,
-    },
-    seats: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Seat' }]
+    numberOfSeats: {
+        Standard: { type: Number, required: true }, 
+        Premium: { type: Number, required: true }, 
+        VIP: { type: Number, required: true }
+    }
 });
 
 export default mongoose.models.Theatre || mongoose.model('Theatre', TheatreSchema);

@@ -13,14 +13,25 @@ const ShowTimeSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
-    seats: {
-        type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Seat',
-    },
     price: {        
         Standard: { type: Number, required: true }, 
         Premium: { type: Number, required: true }, 
         VIP: { type: Number, required: true }
+    },
+    theatre: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Theatre',
+        required: true,
+    },
+    movie: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Movie',
+        required: true,
+    },
+    seats: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: 'Seat',
+        required: true,
     }
 });
 

@@ -15,12 +15,7 @@ const SeatSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
         default: true,
-    },
-    theatre: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Theatre',
-        required: true,
-    },
+    }
 });
 
 export default mongoose.models.Seat || mongoose.model('Seat', SeatSchema);
