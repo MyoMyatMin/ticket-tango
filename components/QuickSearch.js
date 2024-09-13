@@ -60,9 +60,19 @@ export default function QuickSearch() {
       <Typography variant="h5" component="div" gutterBottom>
         Quick Search
       </Typography>
-      <Card sx={{ maxWidth: 400, margin: "auto", mt: 5, mb: 5 }}>
+      <Card
+        sx={{
+          maxWidth: 400,
+          margin: "auto",
+          mt: 5,
+          mb: 5,
+          borderRadius: 2,
+          boxShadow: 3,
+          padding: 2,
+        }}
+      >
         <CardContent>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             <FormControl fullWidth>
               <InputLabel id="theater-label">Theater</InputLabel>
               <Select
@@ -126,7 +136,7 @@ export default function QuickSearch() {
           <Button onClick={handleReset} variant="outlined">
             Reset
           </Button>
-          <Button onClick={handleSubmit} variant="contained">
+          <Button onClick={handleSubmit} variant="contained" color="primary">
             Go
           </Button>
         </CardActions>

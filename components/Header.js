@@ -3,23 +3,26 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Link from "next/link";
+import { Box } from "@mui/material";
 
 const Header = () => {
   return (
-    <AppBar position="static" color="primary">
-      <Toolbar>
+    <AppBar position="sticky" color="primary" elevation={3}>
+      <Toolbar sx={{ paddingX: 3 }}>
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           Ticket Tango
         </Typography>
-        <Button color="inherit" component={Link} href="/">
-          Home
-        </Button>
-        <Button color="inherit" component={Link} href="/about">
-          About
-        </Button>
-        <Button color="inherit" component={Link} href="/contact">
-          Contact
-        </Button>
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Button color="inherit" component={Link} href="/">
+            Home
+          </Button>
+          <Button color="inherit" component={Link} href="/about">
+            About
+          </Button>
+          <Button color="inherit" component={Link} href="/contact">
+            Contact
+          </Button>
+        </Box>
       </Toolbar>
     </AppBar>
   );
