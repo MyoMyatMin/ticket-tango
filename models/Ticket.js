@@ -6,12 +6,12 @@ const TicketSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    showtimeId: {
+    showtime: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Showtime',
+      ref: 'ShowTime',
       required: true,
     },
-    seatId: {
+    seat: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Seat',
       required: true,
