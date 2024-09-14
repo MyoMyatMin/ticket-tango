@@ -63,7 +63,7 @@ export async function POST(request) {
     } catch (error) {
         await session.abortTransaction();
         session.endSession();
-        console.error('Error in PUT /api/booking/[id]:', error);
+        console.error('Error in PUT /api/booking', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
   }
