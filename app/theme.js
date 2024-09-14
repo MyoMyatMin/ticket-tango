@@ -4,17 +4,17 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({  
   palette: {  
     primary: {  
-      main: "#3F51B5", 
+      main: "#FF6B6B", 
     },  
     secondary: {  
-      main: "#E97171", 
+      main: "#4ECDC4", 
     },  
     background: {  
-      default: "#f4f6f8",  
+      default: "#1A1A2E",  
       paper: "#ffffff", 
     },  
     text: {  
-      primary: "#333333", 
+      primary: "#FFD93D", 
       secondary: "#666666", 
     },  
     error: {  
