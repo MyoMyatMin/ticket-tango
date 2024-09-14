@@ -1,7 +1,7 @@
 "use client";
 import Seat from "@/components/Seat";
 import { useState } from "react";
-import { Typography, Grid, Box } from "@mui/material";
+import { Typography, Stack, Box } from "@mui/material";
 import Screen from "@/components/Screen";
 
 const seats = [
@@ -69,57 +69,37 @@ const SeatSelection = () => {
       </Typography>
       <Screen />
 
-      <Grid container justifyContent="center" spacing={2} sx={{ marginTop: 2 }}>
+      <Stack spacing={2} sx={{ marginTop: 2 }} alignItems="center">
         {seats.map((row, index) => (
-          <Grid
-            item
-            key={index}
-            xs={12}
-            container
-            justifyContent="center"
-            alignItems="center"
-            spacing={2}
-          >
-            <Grid
-              item
-              container
-              justifyContent="center"
-              alignItems="center"
-              spacing={1}
+          <Stack key={index} spacing={1} direction="row" alignItems="center">
+            <Typography
+              variant="body1"
+              sx={{ minWidth: "30px", textAlign: "center" }}
             >
-              <Grid item>
-                <Typography
-                  variant="body1"
-                  sx={{ minWidth: "30px", textAlign: "center" }}
-                >
-                  {row.row}
-                </Typography>
-              </Grid>
+              {row.row}
+            </Typography>
 
-              {row.seats.map((seat, i) => (
-                <Seat
-                  key={i}
-                  row={row.row}
-                  seatNumber={i + 1}
-                  isAvailable={seat.isAvailable}
-                  isAccessible={seat.accessible}
-                  price={seat.price}
-                  onSelect={handleSeatSelect}
-                />
-              ))}
+            {row.seats.map((seat, i) => (
+              <Seat
+                key={i}
+                row={row.row}
+                seatNumber={i + 1}
+                isAvailable={seat.isAvailable}
+                isAccessible={seat.accessible}
+                price={seat.price}
+                onSelect={handleSeatSelect}
+              />
+            ))}
 
-              <Grid item>
-                <Typography
-                  variant="body1"
-                  sx={{ minWidth: "30px", textAlign: "center" }}
-                >
-                  {row.row}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Grid>
+            <Typography
+              variant="body1"
+              sx={{ minWidth: "30px", textAlign: "center" }}
+            >
+              {row.row}
+            </Typography>
+          </Stack>
         ))}
-      </Grid>
+      </Stack>
 
       <Typography align="center" sx={{ marginTop: 2 }}>
         Selected Seats: {selectedSeats.join(", ")}
