@@ -16,11 +16,20 @@ const Header = () => {
           <Button color="inherit" component={Link} href="/">
             Home
           </Button>
-          <Button color="inherit" component={Link} href="/about">
-            About
+          <Button color="inherit" component={Link} href="/theatre">
+            Theatre
           </Button>
-          <Button color="inherit" component={Link} href="/contact">
-            Contact
+          <Button color="inherit" component={Link} href="/ticket">
+            Ticket
+          </Button>
+          <Button color="inherit" component={Link} href="/admin/showtime">
+            Admin/ShowTime
+          </Button>
+          <Button color="inherit" component={Link} href="/admin/movie">
+            Admin/Movie
+          </Button>
+          <Button color="inherit" component={Link} href="/admin/theatre">
+            Admin/Theatre
           </Button>
         </Box>
       </Toolbar>
