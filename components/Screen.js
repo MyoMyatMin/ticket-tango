@@ -22,6 +22,14 @@ export default function CinemaScreen({
         mx: "auto",
       }}
     >
+      <Typography
+        variant="h5"
+        color="text.secondary.main"
+        align="center"
+        sx={{ mt: 1 }}
+      >
+        Screen
+      </Typography>
       <svg
         width="100%"
         height={height}
@@ -35,14 +43,7 @@ export default function CinemaScreen({
           strokeWidth="4"
         />
       </svg>
-      <Typography
-        variant="h5"
-        color="text.secondary.main"
-        align="center"
-        sx={{ mt: 1 }}
-      >
-        Screen
-      </Typography>
+      
     </Box>
   );
 }
