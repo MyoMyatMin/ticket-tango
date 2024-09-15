@@ -7,7 +7,6 @@ const Movie = () => {
   return (
     <Box sx={{ flexGrow: 1}}>
       <Grid container spacing={2}>
-
         <Grid size={6}>
           <Stack spacing={2}>
             <FormControl fullWidth>
@@ -42,7 +41,7 @@ const Movie = () => {
               />
             </FormControl>
 
-            <Button variant="contained" sx={{ backgroundColor: '#f05a5a' }}>
+            <Button variant="contained">
               Add
             </Button>
           </Stack>
