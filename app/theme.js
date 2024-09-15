@@ -15,7 +15,7 @@ const theme = createTheme({
     },  
     text: {  
       primary: "#FFD93D", 
-      secondary: "#666666", 
+      secondary: "#e8e3e3", 
     },  
     error: {  
       main: "#f44336", 
@@ -29,7 +29,24 @@ const theme = createTheme({
     success: {  
       main: "#4caf50",  
     },  
-  },  
+  },
+  components: {
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#FF6B6B',
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#4ECDC4',
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'red',
+          },
+        },
+      },
+    },
+  },
 });  
 
 export default theme;

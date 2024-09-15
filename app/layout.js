@@ -20,8 +20,8 @@ export default function RootLayout({ children }) {
               component="main"
               sx={{
                 padding: 4,
-                backgroundColor: "background.default",
-                minHeight: "100vh",
+                // backgroundColor: "background.default",
+                // minHeight: "100vh",
               }}
             >
               {children}
