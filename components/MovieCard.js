@@ -25,6 +25,7 @@ const MovieCard = ({
         borderRadius: 2,
         boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
         backgroundColor: "background.paper",
+        border: 1,
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
         "&:hover": {
           transform: "translateY(-5px)",

@@ -69,6 +69,7 @@ export default function QuickSearch() {
           borderRadius: 2,
           boxShadow: 3,
           padding: 2,
+          border: 1,
         }}
       >
         <CardContent>
