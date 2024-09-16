@@ -109,7 +109,9 @@ const ShowTime = () => {
             </Grid>
            
             <Grid size={12} >
-              <SeatSelection />
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <SeatSelection />
+              </Box>
             </Grid>
           </Grid>
         </Box>

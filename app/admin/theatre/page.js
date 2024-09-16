@@ -8,7 +8,7 @@ const Theatre = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={2}>
-        <Grid size={6}>
+        <Grid size={4}>
           <Stack spacing={2}>
             <FormControl fullWidth required>
               <TextField
@@ -61,7 +61,7 @@ const Theatre = () => {
           </Stack>
         </Grid>
 
-        <Grid size={6}>
+        <Grid size={6} offset={1}>
           <SeatSelection />
         </Grid>
       
