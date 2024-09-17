@@ -26,7 +26,7 @@ const Theatre = ({ isadmin, seats }) => {
     >
       <Screen />
 
-      <Grid container spacing={4} justifyContent="center">
+      <Grid container spacing={4} direction="column" justifyContent="center">
         <Grid>
           <Grid container display="flex" justifyContent="center" spacing={2}>
             {seats

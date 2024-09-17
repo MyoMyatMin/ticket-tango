@@ -8,11 +8,9 @@ const Seat = ({ seatNumber, isAvailable, onSelect, color }) => {
   const handleClick = () => {
     if (isAvailable) {
       if (onSelect) {
-        // Toggle selection and call onSelect if it is provided
         setSelected(!selected);
         onSelect(seatNumber);
       }
-      // If onSelect is not provided, do nothing or handle as needed
     }
   };
 
