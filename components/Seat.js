@@ -1,4 +1,3 @@
-// components/Seat.js
 import { IconButton, Tooltip } from "@mui/material";
 import { useState } from "react";
 import ChairIcon from "@mui/icons-material/Chair";
@@ -8,23 +7,25 @@ const Seat = ({ seatNumber, isAvailable, onSelect, color }) => {
 
   const handleClick = () => {
     if (isAvailable) {
-      setSelected(!selected);
-      onSelect(seatNumber);
+      if (onSelect) {
+        // Toggle selection and call onSelect if it is provided
+        setSelected(!selected);
+        onSelect(seatNumber);
+      }
+      // If onSelect is not provided, do nothing or handle as needed
     }
   };
 
   return (
-    // <Tooltip title={`Row ${row} Seat ${seatNumber} `}>
-      <span>
-        <IconButton
-          onClick={handleClick}
-          disabled={!isAvailable}
-          color={selected ? "success" : color}
-        >
-          <ChairIcon />
-        </IconButton>
-      </span>
-    // </Tooltip>
+    <span>
+      <IconButton
+        onClick={handleClick}
+        disabled={!isAvailable}
+        color={selected ? "success" : color}
+      >
+        <ChairIcon />
+      </IconButton>
+    </span>
   );
 };
 

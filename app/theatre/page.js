@@ -2,8 +2,9 @@ import MoviePoster from "@/components/MoviePoster";
 import Theatre from "@/components/Theatre";
 import TimeSlot from "@/components/TimeSlot";
 import { Box, Divider, Typography, Container } from "@mui/material";
-
+import { getSeats } from "@/lib/helpers/getSeats";
 const TheatrePage = () => {
+  const seats = getSeats();
   const availableDates = Array.from({ length: 14 }, (_, i) => {
     const date = new Date();
     date.setDate(date.getDate() + i);
@@ -46,7 +47,7 @@ const TheatrePage = () => {
         <TimeSlot availableDates={availableDates} timeSlots={timeSlots} />
         <Divider sx={{ borderColor: "primary.main", my: 4 }} />
         <Box display="flex" justifyContent="center" alignItems="center">
-          <Theatre />
+          <Theatre isadmin={true} seats={seats} />
         </Box>
       </Box>
     </Container>

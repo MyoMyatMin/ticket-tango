@@ -1,22 +1,27 @@
 "use client";
 
-import { useState} from 'react';
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import Grid from '@mui/material/Grid2';
-import { InputAdornment, OutlinedInput, Stack, TextField } from '@mui/material';
-import { DatePicker, LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import SeatSelection from '@/components/Theatre';
-
+import { useState } from "react";
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Grid from "@mui/material/Grid2";
+import { InputAdornment, OutlinedInput, Stack, TextField } from "@mui/material";
+import {
+  DatePicker,
+  LocalizationProvider,
+  TimePicker,
+} from "@mui/x-date-pickers";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import Theatre from "@/components/Theatre";
+import { getSeats } from "@/lib/helpers/getSeats";
 
 const ShowTime = () => {
-  const [movie, setMovie] = useState('');
-  const [theatre, setTheatre] = useState('');
+  const seats = getSeats();
+  const [movie, setMovie] = useState("");
+  const [theatre, setTheatre] = useState("");
 
   const handleMovie = (event) => {
     setMovie(event.target.value);
@@ -28,7 +33,7 @@ const ShowTime = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={['TimePicker', 'DatePicker']}>
+      <DemoContainer components={["TimePicker", "DatePicker"]}>
         <Box sx={{ flexGrow: 1 }}>
           <Grid container spacing={2}>
             <Grid size={6}>
@@ -52,7 +57,7 @@ const ShowTime = () => {
                   <DatePicker label="Date" />
                 </FormControl>
 
-                <FormControl fullWidth >
+                <FormControl fullWidth>
                   <TimePicker label="Start Time" />
                 </FormControl>
 
@@ -80,46 +85,56 @@ const ShowTime = () => {
                 </FormControl>
 
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="outlined-adornment-amount">Standard</InputLabel>
+                  <InputLabel htmlFor="outlined-adornment-amount">
+                    Standard
+                  </InputLabel>
                   <OutlinedInput
                     id="outlined-adornment-amount"
-                    startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                    startAdornment={
+                      <InputAdornment position="start">$</InputAdornment>
+                    }
                     label="Amount"
                   />
                 </FormControl>
 
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="outlined-adornment-amount">Premium</InputLabel>
+                  <InputLabel htmlFor="outlined-adornment-amount">
+                    Premium
+                  </InputLabel>
                   <OutlinedInput
                     id="outlined-adornment-amount"
-                    startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                    startAdornment={
+                      <InputAdornment position="start">$</InputAdornment>
+                    }
                     label="Amount"
                   />
                 </FormControl>
 
                 <FormControl fullWidth>
-                  <InputLabel htmlFor="outlined-adornment-amount">VIP</InputLabel>
+                  <InputLabel htmlFor="outlined-adornment-amount">
+                    VIP
+                  </InputLabel>
                   <OutlinedInput
                     id="outlined-adornment-amount"
-                    startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                    startAdornment={
+                      <InputAdornment position="start">$</InputAdornment>
+                    }
                     label="Amount"
                   />
                 </FormControl>
               </Stack>
             </Grid>
-           
-            <Grid size={12} >
+
+            <Grid size={12}>
               <Box display="flex" justifyContent="center" alignItems="center">
-                <SeatSelection />
+                <Theatre isadmin={true} seats={seats} />
               </Box>
             </Grid>
           </Grid>
         </Box>
-
       </DemoContainer>
     </LocalizationProvider>
   );
-  ;
-  };
-  
+};
+
 export default ShowTime;
