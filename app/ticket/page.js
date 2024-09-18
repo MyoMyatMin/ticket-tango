@@ -1,6 +1,6 @@
 "use client"; 
 import React from "react";
-import { Divider, Typography, Box, TextField, Stack } from "@mui/material";
+import { Divider, Typography, Box, Button, TextField, Stack } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 
 const TicketPage = () => {
@@ -39,7 +39,9 @@ const TicketPage = () => {
             </Typography>
             <Divider sx={{ borderColor: "secondary.main", marginX: 2, marginY: 2 }} />
             <TextField label="User" required fullWidth />
-            <TextField label="Pay" required fullWidth />
+            <Button variant="contained">  
+              Pay  
+            </Button> 
           </Stack>
         </Grid>
       </Grid>
