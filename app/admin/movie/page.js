@@ -2,11 +2,14 @@
 
 import React, { useState } from "react";  
 import { Box, Button, FormControl, Stack, TextField, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from "@mui/material";  
-import Grid from "@mui/material/Grid";  
+import Grid from "@mui/material/Grid2";  
 
 const initialMovies = [  
   { id: 1, title: "Inception", genre: "Sci-Fi", duration: "148 mins", casts: "Leonardo DiCaprio, Joseph Gordon-Levitt" },  
   { id: 2, title: "The Godfather", genre: "Crime", duration: "175 mins", casts: "Marlon Brando, Al Pacino" },  
+  { id: 3, title: "The Dark Knight", genre: "Action", duration: "152 mins", casts: "Christian Bale, Heath Ledger" },
+  { id: 4, title: "The Shawshank Redemption", genre: "Drama", duration: "142 mins", casts: "Tim Robbins, Morgan Freeman" },
+  { id: 5, title: "Pulp Fiction", genre: "Crime", duration: "154 mins", casts: "John Travolta, Uma Thurman" },
 ];  
 
 const Movie = () => {  
@@ -16,12 +19,10 @@ const Movie = () => {
   const addMovie = () => {  
     if (newMovie.title && newMovie.genre && newMovie.duration && newMovie.casts) {  
       if (newMovie.id) {  
-        // Update existing movie  
         setMovies(movies.map(movie =>   
           movie.id === newMovie.id ? { ...newMovie } : movie  
         ));  
       } else {  
-        // Add new movie  
         const newId = movies.length ? movies[movies.length - 1].id + 1 : 1; // simple ID generation  
         setMovies([...movies, { id: newId, ...newMovie }]);  
       }  
@@ -35,11 +36,11 @@ const Movie = () => {
 
   const updateMovie = (id) => {  
     const movieToUpdate = movies.find(movie => movie.id === id);  
-    setNewMovie(movieToUpdate); // Set the movie data to the form to edit  
+    setNewMovie(movieToUpdate); 
   };  
 
   const resetForm = () => {  
-    setNewMovie({ id: null, title: "", genre: "", duration: "", casts: "" }); // Reset form  
+    setNewMovie({ id: null, title: "", genre: "", duration: "", casts: "" });   
   };  
 
   const handleChange = (e) => {  
@@ -49,8 +50,8 @@ const Movie = () => {
 
   return (  
     <Box sx={{ flexGrow: 1 }}>  
-      <Grid container spacing={6}>  
-        <Grid item xs={12}>  
+      <Grid container spacing={2}>  
+        <Grid size={4}>  
           <Typography variant="h6" gutterBottom>  
             Movie Form  
           </Typography>  
@@ -105,7 +106,7 @@ const Movie = () => {
           </Stack>  
         </Grid>  
 
-        <Grid item xs={12}>  
+        <Grid size={7} offset={0.5}>  
           <Typography variant="h6" gutterBottom>  
             Movie List  
           </Typography>  
