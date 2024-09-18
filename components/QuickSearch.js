@@ -74,7 +74,7 @@ export default function QuickSearch() {
       >
         <CardContent>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            <FormControl fullWidth>
+            {/* <FormControl fullWidth>
               <InputLabel id="theater-label">Theater</InputLabel>
               <Select
                 labelId="theater-label"
@@ -86,7 +86,7 @@ export default function QuickSearch() {
                 <MenuItem value="theater2">Theater 2</MenuItem>
                 <MenuItem value="theater3">Theater 3</MenuItem>
               </Select>
-            </FormControl>
+            </FormControl> */}
 
             <FormControl fullWidth>
               <InputLabel id="movie-label">Movie</InputLabel>
