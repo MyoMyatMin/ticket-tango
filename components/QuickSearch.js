@@ -97,7 +97,7 @@ export default function QuickSearch() {
                 onChange={(e) => setMovie(e.target.value)}
                 sx={{  
                   '& .MuiSelect-icon': {  
-                    color: '#FFD93D', 
+                    color: '#FF6B6B', 
                   },  
                 }} 
               >
@@ -124,7 +124,7 @@ export default function QuickSearch() {
                 }}  
                 sx={{  
                   '& .MuiSelect-icon': {  
-                    color: '#FFD93D', 
+                    color: '#FF6B6B', 
                   },  
                 }}  
               >  
