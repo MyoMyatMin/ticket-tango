@@ -95,6 +95,11 @@ export default function QuickSearch() {
                 value={movie}
                 label="Movie"
                 onChange={(e) => setMovie(e.target.value)}
+                sx={{  
+                  '& .MuiSelect-icon': {  
+                    color: '#FFD93D', 
+                  },  
+                }} 
               >
                 <MenuItem value="movie1">Movie 1</MenuItem>
                 <MenuItem value="movie2">Movie 2</MenuItem>
@@ -104,21 +109,25 @@ export default function QuickSearch() {
 
             <FormControl fullWidth>
               <InputLabel id="dateTime-label">Date and Time</InputLabel>
-              <Select
-                native
-                labelId="dateTime-label"
-                value={dateTime}
-                label="Date & Time"
-                onChange={(e) => setDateTime(e.target.value)}
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: 200,
-                      overflow: "auto",
-                    },
-                  },
-                }}
-              >
+              <Select  
+                labelId="dateTime-label"  
+                value={dateTime}  
+                label="Date & Time"  
+                onChange={(e) => setDateTime(e.target.value)}  
+                MenuProps={{  
+                  PaperProps: {  
+                    style: {  
+                      maxHeight: 200,  
+                      overflow: 'auto',  
+                    },  
+                  },  
+                }}  
+                sx={{  
+                  '& .MuiSelect-icon': {  
+                    color: '#FFD93D', 
+                  },  
+                }}  
+              >  
                 <option aria-label="None" value="" />
                 {Object.keys(groupedTimes).map((date) => (
                   <optgroup key={date} label={date}>
