@@ -19,11 +19,11 @@ export default function QuickSearch({ movies }) {
   const [selectedMovie, setSelectedMovie] = useState("");
   const [dateTime, setDateTime] = useState("");
   const [availableTimes, setAvailableTimes] = useState([]);
-  const router = useRouter(); // App Router navigation
+  const router = useRouter();
 
   useEffect(() => {
     if (selectedMovie) {
-      const movie = movies.find((m) => m._id === selectedMovie); // Use _id instead of title
+      const movie = movies.find((m) => m._id === selectedMovie);
       if (movie && movie.showtimes.length > 0) {
         setAvailableTimes(
           movie.showtimes.map((showtime) => ({

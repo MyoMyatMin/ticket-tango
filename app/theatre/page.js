@@ -37,7 +37,6 @@ const TheatrePage = () => {
         const movieData = await response.json();
         setMovie(movieData);
 
-        // Set available times only after fetching the movie data
         setAvailableTimes(
           movieData.showtimes.map((showtime) => new Date(showtime.startTime))
         );
@@ -51,22 +50,6 @@ const TheatrePage = () => {
     }
   }, [movieid]);
   console.log(availableTimes);
-
-  const availableDates = Array.from({ length: 14 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() + i);
-    return date;
-  });
-
-  const timeSlots = [
-    "10:00 AM",
-    "12:30 PM",
-    "3:00 PM",
-    "5:30 PM",
-    "8:00 PM",
-    "10:30 PM",
-    "12:00 PM",
-  ];
 
   if (!movie) {
     return (
@@ -173,11 +156,7 @@ const TheatrePage = () => {
           </Grid>
         </Grid>
 
-        <TimeSlot
-          availableDates={availableTimes}
-          timeSlots={timeSlots}
-          selectedTime={time}
-        />
+        <TimeSlot availableDates={availableTimes} selectedTime={time} />
         <Divider sx={{ borderColor: "primary.main", my: 4 }} />
 
         <Grid container spacing={2} sx={{ ml: 4, mb: 4 }}>

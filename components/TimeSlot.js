@@ -4,36 +4,10 @@ import React, { useState, useEffect } from "react";
 import { Button, Typography, Box, Container, Paper } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
-export default function Component({ availableDates, timeSlots, selectedTime }) {
+export default function Component({ availableDates, selectedTime }) {
+  const [uniqueDatesWithTimeSlots, setUniqueDatesWithTimeSlots] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
-
-  // Automatically select the first available date or use the provided selectedTime to choose a date
-  useEffect(() => {
-    if (availableDates && availableDates.length > 0) {
-      // Check if the selectedTime has a valid date in availableDates
-      const selectedDateFromTime = availableDates.find(
-        (date) => formatDate(date) === formatDate(new Date(selectedTime))
-      );
-      setSelectedDate(selectedDateFromTime || availableDates[0]);
-    }
-  }, [availableDates, selectedTime]);
-
-  // Automatically select the provided selectedTime or the first available time slot
-  useEffect(() => {
-    if (selectedDate && timeSlots && timeSlots.length > 0) {
-      const formattedSelectedTime = new Date(selectedTime).toLocaleTimeString(
-        "en-US",
-        { hour: "numeric", minute: "numeric", hour12: true }
-      );
-
-      // Check if the provided selectedTime is a valid time slot
-      const matchingTimeSlot = timeSlots.find(
-        (time) => time === formattedSelectedTime
-      );
-      setSelectedTimeSlot(matchingTimeSlot || timeSlots[0]);
-    }
-  }, [selectedDate, timeSlots, selectedTime]);
 
   const formatDate = (date) => {
     return date.toLocaleDateString("en-US", {
@@ -42,6 +16,61 @@ export default function Component({ availableDates, timeSlots, selectedTime }) {
       day: "numeric",
     });
   };
+
+  const groupDatesWithTimeSlots = (dates) => {
+    const grouped = {};
+
+    dates.forEach((date) => {
+      const day = date.toDateString();
+      const time = date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "numeric",
+        hour12: true,
+      });
+
+      if (!grouped[day]) {
+        grouped[day] = {
+          date: date,
+          timeSlots: [time],
+        };
+      } else {
+        grouped[day].timeSlots.push(time);
+      }
+    });
+
+    return Object.values(grouped);
+  };
+
+  useEffect(() => {
+    if (availableDates && availableDates.length > 0) {
+      const groupedDates = groupDatesWithTimeSlots(availableDates);
+      setUniqueDatesWithTimeSlots(groupedDates);
+
+      if (!selectedDate && groupedDates.length > 0) {
+        setSelectedDate(groupedDates[0].date);
+      }
+    }
+  }, [availableDates]);
+
+  useEffect(() => {
+    if (selectedDate && uniqueDatesWithTimeSlots.length > 0) {
+      const formattedSelectedTime = new Date(selectedTime).toLocaleTimeString(
+        "en-US",
+        { hour: "numeric", minute: "numeric", hour12: true }
+      );
+
+      const selectedDateEntry = uniqueDatesWithTimeSlots.find(
+        (entry) => entry.date.toDateString() === selectedDate.toDateString()
+      );
+
+      if (selectedDateEntry) {
+        const matchingTimeSlot = selectedDateEntry.timeSlots.find(
+          (time) => time === formattedSelectedTime
+        );
+        setSelectedTimeSlot(matchingTimeSlot || selectedDateEntry.timeSlots[0]);
+      }
+    }
+  }, [selectedDate, uniqueDatesWithTimeSlots, selectedTime]);
 
   return (
     <Container maxWidth="md">
@@ -60,18 +89,18 @@ export default function Component({ availableDates, timeSlots, selectedTime }) {
               "&::-webkit-scrollbar": { display: "none" },
             }}
           >
-            {availableDates.map((date) => (
+            {uniqueDatesWithTimeSlots.map((entry) => (
               <Button
-                key={date.toISOString()}
+                key={entry.date.toISOString()}
                 variant={
-                  selectedDate?.toDateString() === date.toDateString()
+                  selectedDate?.toDateString() === entry.date.toDateString()
                     ? "contained"
                     : "outlined"
                 }
                 sx={{ minWidth: "100px", mx: 1 }}
-                onClick={() => setSelectedDate(date)}
+                onClick={() => setSelectedDate(entry.date)}
               >
-                {formatDate(date)}
+                {formatDate(entry.date)}
               </Button>
             ))}
           </Box>
@@ -83,19 +112,24 @@ export default function Component({ availableDates, timeSlots, selectedTime }) {
               Available Times for {formatDate(selectedDate)}
             </Typography>
             <Grid container spacing={2}>
-              {timeSlots.map((time) => (
-                <Grid item xs={6} sm={4} key={time}>
-                  <Button
-                    variant={
-                      selectedTimeSlot === time ? "contained" : "outlined"
-                    }
-                    fullWidth
-                    onClick={() => setSelectedTimeSlot(time)}
-                  >
-                    {time}
-                  </Button>
-                </Grid>
-              ))}
+              {uniqueDatesWithTimeSlots
+                .find(
+                  (entry) =>
+                    entry.date.toDateString() === selectedDate.toDateString()
+                )
+                .timeSlots.map((time) => (
+                  <Grid item xs={6} sm={4} key={time}>
+                    <Button
+                      variant={
+                        selectedTimeSlot === time ? "contained" : "outlined"
+                      }
+                      fullWidth
+                      onClick={() => setSelectedTimeSlot(time)}
+                    >
+                      {time}
+                    </Button>
+                  </Grid>
+                ))}
             </Grid>
 
             {selectedTimeSlot && (
