@@ -58,7 +58,7 @@ export default function QuickSearch({ movies }) {
 
       router.push(
         `/theatre?movieid=${encodeURIComponent(
-          selectedMovie // Pass movie ID instead of title
+          selectedMovie
         )}&time=${encodeURIComponent(selectedTime.time)}`
       );
     }

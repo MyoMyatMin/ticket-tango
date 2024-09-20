@@ -7,7 +7,7 @@ import {
   CardActions,
   Button,
 } from "@mui/material";
-
+import { useRouter } from "next/navigation";
 const MovieCard = ({
   title,
   genre,
@@ -15,11 +15,13 @@ const MovieCard = ({
   duration,
   image,
   description,
-  onClick,
+  _id,
   posterUrl,
 }) => {
-  console.log(image);
-
+  const router = useRouter();
+  const handelSubmit = () => {
+    router.push(`/theatre?movieid=${encodeURIComponent(_id)}`);
+  };
   return (
     <Card
       sx={{
@@ -91,7 +93,7 @@ const MovieCard = ({
         <Button
           size="small"
           variant="contained"
-          onClick={onClick}
+          onClick={handelSubmit}
           sx={{
             backgroundColor: "primary.main",
             color: "#fff",

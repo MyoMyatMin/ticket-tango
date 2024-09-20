@@ -46,28 +46,35 @@ export default function Component({ availableDates, selectedTime }) {
       const groupedDates = groupDatesWithTimeSlots(availableDates);
       setUniqueDatesWithTimeSlots(groupedDates);
 
-      if (!selectedDate && groupedDates.length > 0) {
+      // Only set default selectedDate if selectedTime is not null
+      if (selectedTime !== null && !selectedDate && groupedDates.length > 0) {
         setSelectedDate(groupedDates[0].date);
       }
     }
-  }, [availableDates]);
+  }, [availableDates, selectedTime]);
 
   useEffect(() => {
     if (selectedDate && uniqueDatesWithTimeSlots.length > 0) {
-      const formattedSelectedTime = new Date(selectedTime).toLocaleTimeString(
-        "en-US",
-        { hour: "numeric", minute: "numeric", hour12: true }
-      );
-
-      const selectedDateEntry = uniqueDatesWithTimeSlots.find(
-        (entry) => entry.date.toDateString() === selectedDate.toDateString()
-      );
-
-      if (selectedDateEntry) {
-        const matchingTimeSlot = selectedDateEntry.timeSlots.find(
-          (time) => time === formattedSelectedTime
+      if (selectedTime !== null) {
+        const formattedSelectedTime = new Date(selectedTime).toLocaleTimeString(
+          "en-US",
+          { hour: "numeric", minute: "numeric", hour12: true }
         );
-        setSelectedTimeSlot(matchingTimeSlot || selectedDateEntry.timeSlots[0]);
+
+        const selectedDateEntry = uniqueDatesWithTimeSlots.find(
+          (entry) => entry.date.toDateString() === selectedDate.toDateString()
+        );
+
+        if (selectedDateEntry) {
+          const matchingTimeSlot = selectedDateEntry.timeSlots.find(
+            (time) => time === formattedSelectedTime
+          );
+          setSelectedTimeSlot(
+            matchingTimeSlot || selectedDateEntry.timeSlots[0]
+          );
+        }
+      } else {
+        setSelectedTimeSlot(null); // Clear selectedTimeSlot if selectedTime is null
       }
     }
   }, [selectedDate, uniqueDatesWithTimeSlots, selectedTime]);

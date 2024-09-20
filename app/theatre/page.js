@@ -156,7 +156,7 @@ const TheatrePage = () => {
           </Grid>
         </Grid>
 
-        <TimeSlot availableDates={availableTimes} selectedTime={time} />
+        <TimeSlot availableDates={availableTimes} selectedTime={time || null} />
         <Divider sx={{ borderColor: "primary.main", my: 4 }} />
 
         <Grid container spacing={2} sx={{ ml: 4, mb: 4 }}>
