@@ -14,9 +14,8 @@ import {
   Typography,
 } from "@mui/material";
 
-export default function QuickSearch() {
-  const [theater, setTheater] = useState("");
-  const [movie, setMovie] = useState("");
+export default function QuickSearch({ movies }) {
+  const [selectedMovie, setSelectedMovie] = useState("");
   const [dateTime, setDateTime] = useState("");
 
   const [availableTimes, setAvailableTimes] = useState([
@@ -31,7 +30,6 @@ export default function QuickSearch() {
   ]);
 
   const handleReset = () => {
-    setTheater("");
     setMovie("");
     setDateTime("");
   };
@@ -74,60 +72,51 @@ export default function QuickSearch() {
       >
         <CardContent>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {/* <FormControl fullWidth>
-              <InputLabel id="theater-label">Theater</InputLabel>
-              <Select
-                labelId="theater-label"
-                value={theater}
-                label="Theater"
-                onChange={(e) => setTheater(e.target.value)}
-              >
-                <MenuItem value="theater1">Theater 1</MenuItem>
-                <MenuItem value="theater2">Theater 2</MenuItem>
-                <MenuItem value="theater3">Theater 3</MenuItem>
-              </Select>
-            </FormControl> */}
-
             <FormControl fullWidth>
               <InputLabel id="movie-label">Movie</InputLabel>
               <Select
                 labelId="movie-label"
-                value={movie}
+                value={selectedMovie}
                 label="Movie"
-                onChange={(e) => setMovie(e.target.value)}
-                sx={{  
-                  '& .MuiSelect-icon': {  
-                    color: '#FF6B6B', 
-                  },  
-                }} 
+                onChange={(e) => setSelectedMovie(e.target.value)}
+                sx={{
+                  '& .MuiSelect-icon': {
+                    color: '#FF6B6B',
+                  },
+                }}
               >
-                <MenuItem value="movie1">Movie 1</MenuItem>
-                <MenuItem value="movie2">Movie 2</MenuItem>
-                <MenuItem value="movie3">Movie 3</MenuItem>
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                {movies.map((movie, index) => (
+                  <MenuItem key={index} value={movie.title}>
+                    {movie.title}
+                  </MenuItem>
+                ))}
               </Select>
             </FormControl>
 
             <FormControl fullWidth>
               <InputLabel id="dateTime-label">Date and Time</InputLabel>
-              <Select  
-                labelId="dateTime-label"  
-                value={dateTime}  
-                label="Date & Time"  
-                onChange={(e) => setDateTime(e.target.value)}  
-                MenuProps={{  
-                  PaperProps: {  
-                    style: {  
-                      maxHeight: 200,  
-                      overflow: 'auto',  
-                    },  
-                  },  
-                }}  
-                sx={{  
-                  '& .MuiSelect-icon': {  
-                    color: '#FF6B6B', 
-                  },  
-                }}  
-              >  
+              <Select
+                labelId="dateTime-label"
+                value={dateTime}
+                label="Date & Time"
+                onChange={(e) => setDateTime(e.target.value)}
+                MenuProps={{
+                  PaperProps: {
+                    style: {
+                      maxHeight: 200,
+                      overflow: 'auto',
+                    },
+                  },
+                }}
+                sx={{
+                  '& .MuiSelect-icon': {
+                    color: '#FF6B6B',
+                  },
+                }}
+              >
                 <option aria-label="None" value="" />
                 {Object.keys(groupedTimes).map((date) => (
                   <optgroup key={date} label={date}>

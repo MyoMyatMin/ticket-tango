@@ -1,8 +1,37 @@
+"use client"
 import Movies from "@/components/Movies";
 import QuickSearch from "@/components/QuickSearch";
-import { Box, Divider } from "@mui/material";
+import { Box, Divider, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch movies from the API
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const response = await fetch("/api/movies");
+        if (!response.ok) {
+          throw new Error("Failed to fetch movies");
+        }
+        const data = await response.json();
+        setMovies(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovies();
+  }, []);
+
+  if (loading) return <Typography>Loading movies...</Typography>;
+  if (error) return <Typography>Error: {error}</Typography>;
+
   return (
     <Box
       sx={{
@@ -15,12 +44,12 @@ export default function Home() {
       }}
     >
       <Box sx={{ maxWidth: "600px", margin: "auto", width: "100%" }}>
-        <QuickSearch />
+        <QuickSearch movies={movies} />
       </Box>
 
       <Divider sx={{ borderColor: "primary.main", marginX: 2 }} />
 
-      <Movies />
+      <Movies movies={movies} />
     </Box>
   );
 }
