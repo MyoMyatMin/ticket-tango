@@ -1,50 +1,53 @@
-import { NextResponse } from 'next/server';
-import dbConnect from '@/lib/mongodb';
-import Movie from '@/models/Movie';
+import { NextResponse } from "next/server";
+import dbConnect from "@/lib/mongodb";
+import Movie from "@/models/Movie";
+import { v2 as cloudinary } from "cloudinary";
 
-export async function GET(request, { params }) {
-  try {
-    await dbConnect();
-    const movie = await Movie.findById(params.id);
-    if (!movie) {
-      return NextResponse.json({ error: 'Movie not found' }, { status: 404 });
-    }
-    return NextResponse.json(movie);
-  } catch (error) {
-    console.error('Error in GET /api/movies/[id]:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-  }
-}
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function PUT(request, { params }) {
   try {
     await dbConnect();
     const body = await request.json();
-    const updatedMovie = await Movie.findByIdAndUpdate(params.id, body, { new: true });
+
+    if (body.posterUrl) {
+      const existingMovie = await Movie.findById(params.id);
+      if (!existingMovie) {
+        return NextResponse.json({ error: "Movie not found" }, { status: 404 });
+      }
+
+      if (existingMovie.posterUrl) {
+        const publicId = existingMovie.posterUrl
+          .match(/[^/]*$/)[0]
+          .split(".")[0];
+        await cloudinary.uploader.destroy(publicId);
+      }
+
+      const uploadResponse = await cloudinary.uploader.upload(body.posterUrl, {
+        folder: "movies",
+      });
+
+      body.posterUrl = uploadResponse.secure_url;
+    }
+
+    const updatedMovie = await Movie.findByIdAndUpdate(params.id, body, {
+      new: true,
+    });
 
     if (!updatedMovie) {
-      return NextResponse.json({ error: 'Movie not found' }, { status: 404 });
+      return NextResponse.json({ error: "Movie not found" }, { status: 404 });
     }
 
     return NextResponse.json(updatedMovie);
   } catch (error) {
-    console.error('Error in PUT /api/movies/[id]:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-  }
-}
-
-export async function DELETE(request, { params }) {
-  try {
-    await dbConnect();
-    const deletedMovie = await Movie.findByIdAndDelete(params.id);
-
-    if (!deletedMovie) {
-      return NextResponse.json({ error: 'Movie not found' }, { status: 404 });
-    }
-
-    return NextResponse.json({ message: 'Movie deleted successfully' });
-  } catch (error) {
-    console.error('Error in DELETE /api/movies/[id]:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error("Error in PUT /api/movies/[id]:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }

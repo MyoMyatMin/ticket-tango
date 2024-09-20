@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Movie from "@/models/Movie";
+import { v2 as cloudinary } from "cloudinary";
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 export async function GET() {
   try {
@@ -17,7 +24,20 @@ export async function POST(request) {
   try {
     await dbConnect();
     const body = await request.json();
-    const newMovie = await Movie.create(body);
+
+    let posterUrl = body.posterUrl;
+    if (posterUrl) {
+      const result = await cloudinary.uploader.upload(posterUrl, {
+        folder: "movies",
+      });
+
+      posterUrl = result.secure_url;
+    }
+
+    const newMovie = await Movie.create({
+      ...body,
+      posterUrl: posterUrl,
+    });
 
     return NextResponse.json(newMovie, { status: 201 });
   } catch (error) {
