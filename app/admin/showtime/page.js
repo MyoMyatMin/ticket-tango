@@ -1,6 +1,6 @@
 "use client";  
 
-import { useState } from "react";  
+import { useEffect, useState } from "react";  
 import Box from "@mui/material/Box";  
 import InputLabel from "@mui/material/InputLabel";  
 import MenuItem from "@mui/material/MenuItem";  
@@ -15,20 +15,41 @@ import {
 } from "@mui/x-date-pickers";  
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";  
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";  
-import Theatre from "@/components/Theatre";  
-import { getSeats } from "@/lib/helpers/getSeats";  
+import SampleTheatre from "@/components/SampleTheatre";
 
 const ShowTime = () => {  
-  const seats = getSeats();  
+  const [numberOfSeats, setNumberOfSeats] = useState();
   const [movie, setMovie] = useState("");  
-  const [theatre, setTheatre] = useState("");  
+  const [theatre, setTheatre] = useState(""); 
+  const [movies, setMovies] = useState([]);
+  const [theatres, setTheatres] = useState([]);
+
+  useEffect(() => {
+    // Fetch movies from /api/movies
+    const fetchMovies = async () => {
+      const res = await fetch("/api/movies");
+      const data = await res.json();
+      setMovies(data);
+    };
+
+    // Fetch theatres from /api/theatre
+    const fetchTheatres = async () => {
+      const res = await fetch("/api/theatres");
+      const data = await res.json();
+      setTheatres(data);
+    };
+
+    fetchMovies();
+    fetchTheatres();
+  }, []);
 
   const handleMovie = (event) => {  
     setMovie(event.target.value);  
   };  
 
   const handleTheatre = (event) => {  
-    setTheatre(event.target.value);  
+    setTheatre(event.target.value);
+    setNumberOfSeats(theatres.find(theatre => theatre._id == event.target.value ).numberOfSeats);
   };  
 
   return (  
@@ -52,9 +73,11 @@ const ShowTime = () => {
                       },  
                     }}  
                   >  
-                    <MenuItem value={10}>Ten</MenuItem>  
-                    <MenuItem value={20}>Twenty</MenuItem>  
-                    <MenuItem value={30}>Thirty</MenuItem>  
+                   {movies.map((movie) => (
+                      <MenuItem key={movie._id} value={movie._id}>
+                        {movie.title}
+                      </MenuItem>
+                    ))}
                   </Select>  
                 </FormControl>  
 
@@ -112,9 +135,11 @@ const ShowTime = () => {
                       },  
                     }}  
                   >  
-                    <MenuItem value={10}>Ten</MenuItem>  
-                    <MenuItem value={20}>Twenty</MenuItem>  
-                    <MenuItem value={30}>Thirty</MenuItem>  
+                   {theatres.map((theatre) => (
+                      <MenuItem key={theatre._id} value={theatre._id}>
+                        {theatre.name}
+                      </MenuItem>
+                    ))}
                   </Select>  
                 </FormControl>  
 
@@ -155,7 +180,8 @@ const ShowTime = () => {
 
             <Grid size={12}>  
               <Box display="flex" justifyContent="center" alignItems="center">  
-                <Theatre isadmin={true} seats={seats} />  
+                {/* <Theatre isadmin={true} seats={seats} />   */}
+                <SampleTheatre numberOfSeats={numberOfSeats} />
               </Box>  
             </Grid>  
           </Grid>  
