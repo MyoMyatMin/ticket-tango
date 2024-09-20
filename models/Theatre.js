@@ -7,9 +7,9 @@ const TheatreSchema = new mongoose.Schema({
         required: true,
     },
     numberOfSeats: {
-        Standard: { type: Number, required: true }, 
-        Premium: { type: Number, required: true }, 
-        VIP: { type: Number, required: true }
+        standard: { type: Number, required: true }, 
+        premium: { type: Number, required: true }, 
+        vip: { type: Number, required: true }
     }
 });
 

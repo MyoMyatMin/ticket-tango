@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 
 const TicketSchema = new mongoose.Schema({
     username: {
-        type: String,
-        required: true,
+      type: String,
+      required: true,
     },
     showtime: {
       type: mongoose.Schema.Types.ObjectId,
@@ -12,7 +12,7 @@ const TicketSchema = new mongoose.Schema({
       required: true,
     },
     seat: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: [mongoose.Schema.Types.ObjectId],
       ref: 'Seat',
       required: true,
     },
