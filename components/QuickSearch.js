@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; // App Router's navigation
 import {
   Card,
   CardContent,
@@ -17,41 +18,51 @@ import {
 export default function QuickSearch({ movies }) {
   const [selectedMovie, setSelectedMovie] = useState("");
   const [dateTime, setDateTime] = useState("");
+  const [availableTimes, setAvailableTimes] = useState([]);
+  const router = useRouter(); // App Router navigation
 
-  const [availableTimes, setAvailableTimes] = useState([
-    { id: 1, time: "Sun, 15 Sep 2024 10:00 AM" },
-    { id: 2, time: "Sun, 15 Sep 2024 1:00 PM" },
-    { id: 3, time: "Sun, 15 Sep 2024 4:00 PM" },
-    { id: 4, time: "Sun, 15 Sep 2024 7:00 PM" },
-    { id: 5, time: "Mon, 16 Sep 2024 10:00 AM" },
-    { id: 6, time: "Mon, 16 Sep 2024 1:00 PM" },
-    { id: 7, time: "Tue, 17 Sep 2024 4:00 PM" },
-    { id: 8, time: "Tue, 17 Sep 2024 7:00 PM" },
-  ]);
+  useEffect(() => {
+    if (selectedMovie) {
+      const movie = movies.find((m) => m._id === selectedMovie); // Use _id instead of title
+      if (movie && movie.showtimes.length > 0) {
+        setAvailableTimes(
+          movie.showtimes.map((showtime) => ({
+            id: showtime._id,
+            time: new Date(showtime.startTime).toLocaleString("en-US", {
+              weekday: "short",
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true,
+            }),
+          }))
+        );
+      } else {
+        setAvailableTimes([]);
+      }
+    } else {
+      setAvailableTimes([]);
+    }
+  }, [selectedMovie, movies]);
 
   const handleReset = () => {
-    setMovie("");
+    setSelectedMovie("");
     setDateTime("");
   };
 
   const handleSubmit = () => {
-    console.log("Booking:", { theater, movie, dateTime });
+    if (selectedMovie && dateTime) {
+      const selectedTime = availableTimes.find((time) => time.id === dateTime);
+
+      router.push(
+        `/theatre?movieid=${encodeURIComponent(
+          selectedMovie // Pass movie ID instead of title
+        )}&time=${encodeURIComponent(selectedTime.time)}`
+      );
+    }
   };
-
-  const groupTimesByDate = () => {
-    const groupedTimes = availableTimes.reduce((acc, current) => {
-      const datePart = current.time.split(" ").slice(0, 4).join(" ");
-      if (!acc[datePart]) {
-        acc[datePart] = [];
-      }
-      acc[datePart].push(current);
-      return acc;
-    }, {});
-
-    return groupedTimes;
-  };
-
-  const groupedTimes = groupTimesByDate();
 
   return (
     <>
@@ -78,55 +89,43 @@ export default function QuickSearch({ movies }) {
                 labelId="movie-label"
                 value={selectedMovie}
                 label="Movie"
-                onChange={(e) => setSelectedMovie(e.target.value)}
-                sx={{
-                  '& .MuiSelect-icon': {
-                    color: '#FF6B6B',
-                  },
-                }}
+                onChange={(e) => setSelectedMovie(e.target.value)} // Set movie _id
+                sx={{ "& .MuiSelect-icon": { color: "#FF6B6B" } }}
               >
                 <MenuItem value="">
                   <em>None</em>
                 </MenuItem>
-                {movies.map((movie, index) => (
-                  <MenuItem key={index} value={movie.title}>
+                {movies.map((movie) => (
+                  <MenuItem key={movie._id} value={movie._id}>
+                    {" "}
+                    {/* Use movie._id */}
                     {movie.title}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
 
-            <FormControl fullWidth>
+            <FormControl fullWidth disabled={!selectedMovie}>
               <InputLabel id="dateTime-label">Date and Time</InputLabel>
               <Select
                 labelId="dateTime-label"
                 value={dateTime}
                 label="Date & Time"
                 onChange={(e) => setDateTime(e.target.value)}
-                MenuProps={{
-                  PaperProps: {
-                    style: {
-                      maxHeight: 200,
-                      overflow: 'auto',
-                    },
-                  },
-                }}
-                sx={{
-                  '& .MuiSelect-icon': {
-                    color: '#FF6B6B',
-                  },
-                }}
+                sx={{ "& .MuiSelect-icon": { color: "#FF6B6B" } }}
               >
-                <option aria-label="None" value="" />
-                {Object.keys(groupedTimes).map((date) => (
-                  <optgroup key={date} label={date}>
-                    {groupedTimes[date].map((time) => (
-                      <option key={time.id} value={time.id}>
-                        {time.time}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
+                <MenuItem value="">
+                  <em>None</em>
+                </MenuItem>
+                {availableTimes.length > 0 ? (
+                  availableTimes.map((time) => (
+                    <MenuItem key={time.id} value={time.id}>
+                      {time.time}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>No times available</MenuItem>
+                )}
               </Select>
             </FormControl>
           </Box>
@@ -135,7 +134,12 @@ export default function QuickSearch({ movies }) {
           <Button onClick={handleReset} variant="outlined">
             Reset
           </Button>
-          <Button onClick={handleSubmit} variant="contained" color="primary">
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            color="primary"
+            disabled={!dateTime}
+          >
             Go
           </Button>
         </CardActions>

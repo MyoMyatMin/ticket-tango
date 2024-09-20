@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Movie from "@/models/Movie";
 import { v2 as cloudinary } from "cloudinary";
+import ShowTime from "@/models/ShowTime";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -13,7 +14,20 @@ export async function GET() {
   try {
     await dbConnect();
     const movies = await Movie.find({});
-    return NextResponse.json(movies);
+    const moviesWithShowtimes = await Promise.all(
+      movies.map(async (movie) => {
+        const showtimes = await ShowTime.find({ movie: movie._id }).populate(
+          "theatre seats"
+        );
+
+        return {
+          ...movie.toObject(),
+          showtimes,
+        };
+      })
+    );
+
+    return NextResponse.json(moviesWithShowtimes);
   } catch (error) {
     console.error("Error in GET /api/movies:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

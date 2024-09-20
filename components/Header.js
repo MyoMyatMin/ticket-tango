@@ -18,9 +18,6 @@ const Header = () => {
           <Button color="inherit" component={Link} href="/">
             Home
           </Button>
-          <Button color="inherit" component={Link} href="/theatre">
-            Theatre
-          </Button>
           <Button color="inherit" component={Link} href="/ticket">
             Ticket
           </Button>

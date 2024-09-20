@@ -2,12 +2,39 @@ import { NextResponse } from "next/server";
 import dbConnect from "@/lib/mongodb";
 import Movie from "@/models/Movie";
 import { v2 as cloudinary } from "cloudinary";
-
+import ShowTime from "@/models/ShowTime";
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+export async function GET(request, { params }) {
+  try {
+    await dbConnect();
+    const movie = await Movie.findById(params.id);
+
+    if (!movie) {
+      return NextResponse.json({ error: "Movie not found" }, { status: 404 });
+    }
+
+    // Fetch the showtimes for the specific movie
+    const showtimes = await ShowTime.find({ movie: movie._id }).populate(
+      "theatre seats"
+    );
+
+    return NextResponse.json({
+      ...movie.toObject(),
+      showtimes,
+    });
+  } catch (error) {
+    console.error("Error in GET /api/movies/[id]:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
 
 export async function PUT(request, { params }) {
   try {
