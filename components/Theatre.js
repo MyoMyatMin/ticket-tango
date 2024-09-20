@@ -8,6 +8,8 @@ import ChairIcon from "@mui/icons-material/Chair";
 import { getSeats } from "@/lib/helpers/getSeats";
 
 const Theatre = ({ isadmin, seats }) => {
+  console.log(isadmin);
+
   const [selectedSeats, setSelectedSeats] = useState([]);
   // const seats = getSeats();
   const handleSeatSelect = (seatNumber) => {

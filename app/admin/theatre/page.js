@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -31,6 +31,39 @@ export default function TheatrePage() {
     seats: [],
   });
   const [sampleSeats, setSampleSeats] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch theatres from the API on component mount
+  useEffect(() => {
+    const fetchTheatres = async () => {
+      try {
+        const response = await fetch("/api/theatres"); // Use relative path for better portability
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        const formattedTheatres = data.map((theatre) => ({
+          id: theatre._id, // use _id as id
+          name: theatre.name,
+          standardSeats: theatre.numberOfSeats.standard,
+          premiumSeats: theatre.numberOfSeats.premium,
+          vipSeats: theatre.numberOfSeats.vip,
+          seats: generateSeats(
+            theatre.numberOfSeats.standard,
+            theatre.numberOfSeats.premium,
+            theatre.numberOfSeats.vip
+          ),
+        }));
+
+        setTheatres(formattedTheatres);
+      } catch (error) {
+        console.error("Failed to fetch theatres:", error);
+      }
+    };
+
+    fetchTheatres();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -69,31 +102,98 @@ export default function TheatrePage() {
     setSampleSeats(seats);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setLoading(true);
     const seats = generateSeats(
       selectedTheatre.standardSeats,
       selectedTheatre.premiumSeats,
       selectedTheatre.vipSeats
     );
 
-    if (selectedTheatre.id) {
-      setTheatres((prev) =>
-        prev.map((theatre) =>
-          theatre.id === selectedTheatre.id
-            ? { ...selectedTheatre, seats }
-            : theatre
-        )
-      );
-    } else {
-      const newTheatre = {
-        ...selectedTheatre,
-        id: Date.now(),
-        seats,
-      };
-      setTheatres((prev) => [...prev, newTheatre]);
-    }
+    try {
+      if (selectedTheatre.id) {
+        const response = await fetch(`/api/theatres/${selectedTheatre.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: selectedTheatre.name,
+            numberOfSeats: {
+              standard: selectedTheatre.standardSeats,
+              premium: selectedTheatre.premiumSeats,
+              vip: selectedTheatre.vipSeats,
+            },
+          }),
+        });
 
-    resetForm();
+        if (!response.ok) {
+          throw new Error(`Failed to update theatre: ${response.statusText}`);
+        }
+
+        const updatedTheatre = await response.json();
+        setTheatres((prev) =>
+          prev.map((theatre) =>
+            theatre.id === updatedTheatre._id
+              ? {
+                  ...theatre,
+                  name: updatedTheatre.name,
+                  standardSeats: updatedTheatre.numberOfSeats.standard,
+                  premiumSeats: updatedTheatre.numberOfSeats.premium,
+                  vipSeats: updatedTheatre.numberOfSeats.vip,
+                  seats: generateSeats(
+                    updatedTheatre.numberOfSeats.standard,
+                    updatedTheatre.numberOfSeats.premium,
+                    updatedTheatre.numberOfSeats.vip
+                  ),
+                }
+              : theatre
+          )
+        );
+      } else {
+        const response = await fetch("/api/theatres", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: selectedTheatre.name,
+            numberOfSeats: {
+              standard: selectedTheatre.standardSeats,
+              premium: selectedTheatre.premiumSeats,
+              vip: selectedTheatre.vipSeats,
+            },
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to add theatre: ${response.statusText}`);
+        }
+
+        const newTheatre = await response.json();
+
+        setTheatres((prev) => [
+          ...prev,
+          {
+            id: newTheatre._id,
+            name: newTheatre.name,
+            standardSeats: newTheatre.numberOfSeats.standard,
+            premiumSeats: newTheatre.numberOfSeats.premium,
+            vipSeats: newTheatre.numberOfSeats.vip,
+            seats: generateSeats(
+              newTheatre.numberOfSeats.standard,
+              newTheatre.numberOfSeats.premium,
+              newTheatre.numberOfSeats.vip
+            ),
+          },
+        ]);
+      }
+      resetForm();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const updateTheatre = (id) => {
@@ -104,8 +204,23 @@ export default function TheatrePage() {
     }
   };
 
-  const deleteTheatre = (id) => {
-    setTheatres((prev) => prev.filter((theatre) => theatre.id !== id));
+  const deleteTheatre = async (id) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/theatres/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to delete theatre: ${response.statusText}`);
+      }
+
+      setTheatres((prev) => prev.filter((theatre) => theatre.id !== id));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const resetForm = () => {
@@ -165,7 +280,7 @@ export default function TheatrePage() {
         </Table>
       </TableContainer>
 
-      <Divider sx={{ m: '30px'}} />
+      <Divider sx={{ m: "30px" }} />
 
       <Grid container spacing={2}>
         <Grid size={4}>
@@ -218,7 +333,7 @@ export default function TheatrePage() {
           </Stack>
         </Grid>
 
-        <Grid item size={6} offset={1}>
+        <Grid size={6} offset={1}>
           <Theatre isadmin={true} seats={sampleSeats} />
         </Grid>
       </Grid>

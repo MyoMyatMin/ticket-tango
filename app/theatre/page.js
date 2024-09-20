@@ -47,7 +47,7 @@ const TheatrePage = () => {
         <TimeSlot availableDates={availableDates} timeSlots={timeSlots} />
         <Divider sx={{ borderColor: "primary.main", my: 4 }} />
         <Box display="flex" justifyContent="center" alignItems="center">
-          <Theatre isadmin={true} seats={seats} />
+          <Theatre isadmin={false} seats={seats} />
         </Box>
       </Box>
     </Container>
