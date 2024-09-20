@@ -4,7 +4,7 @@ import MovieCard from "./MovieCard";
 import { Container, Box } from "@mui/material";
 import { Typography } from "@mui/material";
 
-const Movies = ({movies}) => {
+const Movies = ({ movies }) => {
   // const movies = [
   //   {
   //     title: "Inception",
@@ -100,8 +100,6 @@ const Movies = ({movies}) => {
   //     onClick: () => console.log("12 Angry Men clicked"),
   //   },
   // ];
-
-
 
   return (
     <Container

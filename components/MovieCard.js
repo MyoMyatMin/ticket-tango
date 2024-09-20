@@ -16,7 +16,10 @@ const MovieCard = ({
   image,
   description,
   onClick,
+  posterUrl,
 }) => {
+  console.log(image);
+
   return (
     <Card
       sx={{
@@ -35,7 +38,7 @@ const MovieCard = ({
     >
       <CardMedia
         sx={{ height: 200, borderRadius: "3px 3px 0 0" }}
-        image={image}
+        image={posterUrl}
         title={title}
       />
       <CardContent
