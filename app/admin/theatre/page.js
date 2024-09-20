@@ -18,45 +18,32 @@ import {
   Divider,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import Theatre from "@/components/Theatre";
+import SampleTheatre from "@/components/SampleTheatre";
 
 export default function TheatrePage() {
   const [theatres, setTheatres] = useState([]);
   const [selectedTheatre, setSelectedTheatre] = useState({
-    id: 0,
+    _id: 0,
     name: "",
-    standardSeats: 0,
-    premiumSeats: 0,
-    vipSeats: 0,
-    seats: [],
+    numberOfSeats: {
+      standard: 0,
+      premium: 0,
+      vip: 0
+    }
   });
-  const [sampleSeats, setSampleSeats] = useState([]);
   const [loading, setLoading] = useState(false);
 
   // Fetch theatres from the API on component mount
   useEffect(() => {
     const fetchTheatres = async () => {
       try {
-        const response = await fetch("/api/theatres"); // Use relative path for better portability
+        const response = await fetch("/api/theatres");
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
 
-        const formattedTheatres = data.map((theatre) => ({
-          id: theatre._id, // use _id as id
-          name: theatre.name,
-          standardSeats: theatre.numberOfSeats.standard,
-          premiumSeats: theatre.numberOfSeats.premium,
-          vipSeats: theatre.numberOfSeats.vip,
-          seats: generateSeats(
-            theatre.numberOfSeats.standard,
-            theatre.numberOfSeats.premium,
-            theatre.numberOfSeats.vip
-          ),
-        }));
-
-        setTheatres(formattedTheatres);
+        setTheatres(data);
       } catch (error) {
         console.error("Failed to fetch theatres:", error);
       }
@@ -67,63 +54,36 @@ export default function TheatrePage() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setSelectedTheatre((prev) => ({
-      ...prev,
-      [name]: name === "name" ? value : Number(value),
-    }));
-  };
+    console.log(name, value)
 
-  const generateSeats = (standard, premium, vip) => {
-    return [
-      ...Array.from({ length: standard }, (_, index) => ({
-        name: `Standard Seat ${index + 1}`,
-        type: "Standard",
-        isAvailable: true,
-      })),
-      ...Array.from({ length: premium }, (_, index) => ({
-        name: `Premium Seat ${index + 1}`,
-        type: "Premium",
-        isAvailable: true,
-      })),
-      ...Array.from({ length: vip }, (_, index) => ({
-        name: `VIP Seat ${index + 1}`,
-        type: "VIP",
-        isAvailable: true,
-      })),
-    ];
-  };
-
-  const handleShowSample = () => {
-    const seats = generateSeats(
-      selectedTheatre.standardSeats,
-      selectedTheatre.premiumSeats,
-      selectedTheatre.vipSeats
-    );
-    setSampleSeats(seats);
+    setSelectedTheatre((prev) => {
+      if (name === 'name') {
+        return { ...prev, [name]: value }
+      } else {
+        return {
+          ...prev,
+          numberOfSeats: {
+            ...prev.numberOfSeats,
+            [name]: parseInt(value) || 0
+          }
+        }
+      }
+    })
   };
 
   const handleSubmit = async () => {
     setLoading(true);
-    const seats = generateSeats(
-      selectedTheatre.standardSeats,
-      selectedTheatre.premiumSeats,
-      selectedTheatre.vipSeats
-    );
 
     try {
-      if (selectedTheatre.id) {
-        const response = await fetch(`/api/theatres/${selectedTheatre.id}`, {
+      if (selectedTheatre._id) {
+        const response = await fetch(`/api/theatres/${selectedTheatre._id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             name: selectedTheatre.name,
-            numberOfSeats: {
-              standard: selectedTheatre.standardSeats,
-              premium: selectedTheatre.premiumSeats,
-              vip: selectedTheatre.vipSeats,
-            },
+            numberOfSeats: selectedTheatre.numberOfSeats,
           }),
         });
 
@@ -132,20 +92,13 @@ export default function TheatrePage() {
         }
 
         const updatedTheatre = await response.json();
+
         setTheatres((prev) =>
           prev.map((theatre) =>
-            theatre.id === updatedTheatre._id
+            theatre._id === updatedTheatre._id
               ? {
                   ...theatre,
-                  name: updatedTheatre.name,
-                  standardSeats: updatedTheatre.numberOfSeats.standard,
-                  premiumSeats: updatedTheatre.numberOfSeats.premium,
-                  vipSeats: updatedTheatre.numberOfSeats.vip,
-                  seats: generateSeats(
-                    updatedTheatre.numberOfSeats.standard,
-                    updatedTheatre.numberOfSeats.premium,
-                    updatedTheatre.numberOfSeats.vip
-                  ),
+                  ...updatedTheatre
                 }
               : theatre
           )
@@ -158,11 +111,7 @@ export default function TheatrePage() {
           },
           body: JSON.stringify({
             name: selectedTheatre.name,
-            numberOfSeats: {
-              standard: selectedTheatre.standardSeats,
-              premium: selectedTheatre.premiumSeats,
-              vip: selectedTheatre.vipSeats,
-            },
+            numberOfSeats: selectedTheatre.numberOfSeats,
           }),
         });
 
@@ -172,21 +121,7 @@ export default function TheatrePage() {
 
         const newTheatre = await response.json();
 
-        setTheatres((prev) => [
-          ...prev,
-          {
-            id: newTheatre._id,
-            name: newTheatre.name,
-            standardSeats: newTheatre.numberOfSeats.standard,
-            premiumSeats: newTheatre.numberOfSeats.premium,
-            vipSeats: newTheatre.numberOfSeats.vip,
-            seats: generateSeats(
-              newTheatre.numberOfSeats.standard,
-              newTheatre.numberOfSeats.premium,
-              newTheatre.numberOfSeats.vip
-            ),
-          },
-        ]);
+        setTheatres((prev) => [...prev, newTheatre]);
       }
       resetForm();
     } catch (error) {
@@ -197,10 +132,9 @@ export default function TheatrePage() {
   };
 
   const updateTheatre = (id) => {
-    const theatreToUpdate = theatres.find((theatre) => theatre.id === id);
+    const theatreToUpdate = theatres.find((theatre) => theatre._id === id);
     if (theatreToUpdate) {
       setSelectedTheatre(theatreToUpdate);
-      setSampleSeats(theatreToUpdate.seats);
     }
   };
 
@@ -215,7 +149,7 @@ export default function TheatrePage() {
         throw new Error(`Failed to delete theatre: ${response.statusText}`);
       }
 
-      setTheatres((prev) => prev.filter((theatre) => theatre.id !== id));
+      setTheatres((prev) => prev.filter((theatre) => theatre._id !== id));
     } catch (error) {
       console.error(error);
     } finally {
@@ -225,15 +159,15 @@ export default function TheatrePage() {
 
   const resetForm = () => {
     setSelectedTheatre({
-      id: 0,
+      _id: 0,
       name: "",
-      standardSeats: 0,
-      premiumSeats: 0,
-      vipSeats: 0,
-      seats: [],
-    });
-    setSampleSeats([]);
-  };
+      numberOfSeats: {
+        standard: 0,
+        premium: 0,
+        vip: 0
+      }
+    })
+  }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -253,23 +187,23 @@ export default function TheatrePage() {
           </TableHead>
           <TableBody>
             {theatres.map((theatre) => (
-              <TableRow key={theatre.id}>
+              <TableRow key={theatre._id}>
                 <TableCell>{theatre.name}</TableCell>
-                <TableCell>{theatre.standardSeats}</TableCell>
-                <TableCell>{theatre.premiumSeats}</TableCell>
-                <TableCell>{theatre.vipSeats}</TableCell>
+                <TableCell>{theatre.numberOfSeats.standard}</TableCell>
+                <TableCell>{theatre.numberOfSeats.premium}</TableCell>
+                <TableCell>{theatre.numberOfSeats.vip}</TableCell>
                 <TableCell>
                   <Button
                     variant="outlined"
                     color="primary"
-                    onClick={() => updateTheatre(theatre.id)}
+                    onClick={() => updateTheatre(theatre._id)}
                   >
                     Update
                   </Button>
                   <Button
                     variant="outlined"
                     color="secondary"
-                    onClick={() => deleteTheatre(theatre.id)}
+                    onClick={() => deleteTheatre(theatre._id)}
                   >
                     Delete
                   </Button>
@@ -299,42 +233,39 @@ export default function TheatrePage() {
             </FormControl>
             <FormControl fullWidth required>
               <TextField
-                name="standardSeats"
+                name="standard"
                 label="Number of Standard Seats"
                 type="number"
-                value={selectedTheatre.standardSeats}
+                value={selectedTheatre.numberOfSeats.standard}
                 onChange={handleInputChange}
               />
             </FormControl>
             <FormControl fullWidth required>
               <TextField
-                name="premiumSeats"
+                name="premium"
                 label="Number of Premium Seats"
                 type="number"
-                value={selectedTheatre.premiumSeats}
+                value={selectedTheatre.numberOfSeats.premium}
                 onChange={handleInputChange}
               />
             </FormControl>
             <FormControl fullWidth required>
               <TextField
-                name="vipSeats"
+                name="vip"
                 label="Number of VIP Seats"
                 type="number"
-                value={selectedTheatre.vipSeats}
+                value={selectedTheatre.numberOfSeats.vip}
                 onChange={handleInputChange}
               />
             </FormControl>
-            <Button variant="outlined" onClick={handleShowSample}>
-              Show Sample
-            </Button>
             <Button variant="contained" onClick={handleSubmit}>
-              {selectedTheatre.id ? "Update" : "Add"} Theatre
+              {selectedTheatre._id ? "Update" : "Add"} Theatre
             </Button>
           </Stack>
         </Grid>
 
         <Grid size={6} offset={1}>
-          <Theatre isadmin={true} seats={sampleSeats} />
+          <SampleTheatre numberOfSeats={selectedTheatre.numberOfSeats} />
         </Grid>
       </Grid>
     </Box>
