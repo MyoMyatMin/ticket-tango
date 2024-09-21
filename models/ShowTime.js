@@ -14,9 +14,9 @@ const ShowTimeSchema = new mongoose.Schema({
         required: true,
     },
     price: {        
-        Standard: { type: Number, required: true }, 
-        Premium: { type: Number, required: true }, 
-        VIP: { type: Number, required: true }
+        standard: { type: Number, required: true }, 
+        premium: { type: Number, required: true }, 
+        vip: { type: Number, required: true }
     },
     theatre: {
         type: mongoose.Schema.Types.ObjectId,
@@ -34,5 +34,7 @@ const ShowTimeSchema = new mongoose.Schema({
         required: true,
     }
 });
+
+ShowTimeSchema.index({ startTime: 1, date: 1, theatre: 1, movie: 1}, { unique: true} )
 
 export default mongoose.models.ShowTime || mongoose.model('ShowTime', ShowTimeSchema);

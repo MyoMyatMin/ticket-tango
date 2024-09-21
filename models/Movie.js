@@ -17,6 +17,10 @@ const MovieSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isOngoing: {
+    type: Boolean,
+    default: false,
+  },
   cast: {
     type: [String],
   },

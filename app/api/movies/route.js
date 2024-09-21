@@ -14,20 +14,20 @@ export async function GET() {
   try {
     await dbConnect();
     const movies = await Movie.find({});
-    const moviesWithShowtimes = await Promise.all(
-      movies.map(async (movie) => {
-        const showtimes = await ShowTime.find({ movie: movie._id }).populate(
-          "theatre seats"
-        );
+    // const moviesWithShowtimes = await Promise.all(
+    //   movies.map(async (movie) => {
+    //     const showtimes = await ShowTime.find({ movie: movie._id }).populate(
+    //       "theatre seats"
+    //     );
 
-        return {
-          ...movie.toObject(),
-          showtimes,
-        };
-      })
-    );
+    //     return {
+    //       ...movie.toObject(),
+    //       showtimes,
+    //     };
+    //   })
+    // );
 
-    return NextResponse.json(moviesWithShowtimes);
+    return NextResponse.json(movies);
   } catch (error) {
     console.error("Error in GET /api/movies:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });

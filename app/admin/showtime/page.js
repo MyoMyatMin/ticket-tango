@@ -7,7 +7,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";  
 import Select from "@mui/material/Select";  
 import Grid from "@mui/material/Grid2";  
-import { InputAdornment, OutlinedInput, Stack } from "@mui/material";  
+import { Button, InputAdornment, OutlinedInput, Stack } from "@mui/material";  
 import {  
   DatePicker,  
   LocalizationProvider,  
@@ -16,6 +16,7 @@ import {
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";  
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";  
 import SampleTheatre from "@/components/SampleTheatre";
+import dayjs from "dayjs";
 
 const ShowTime = () => {  
   const [numberOfSeats, setNumberOfSeats] = useState();
@@ -23,6 +24,12 @@ const ShowTime = () => {
   const [theatre, setTheatre] = useState(""); 
   const [movies, setMovies] = useState([]);
   const [theatres, setTheatres] = useState([]);
+  const [date, setDate] = useState(null);
+  const [startTime, setStartTime] = useState(null);
+  const [endTime, setEndTime] = useState(null);
+  const [standardPrice, setStandardPrice] = useState("");
+  const [premiumPrice, setPremiumPrice] = useState("");
+  const [vipPrice, setVipPrice] = useState("");
 
   useEffect(() => {
     // Fetch movies from /api/movies
@@ -51,6 +58,51 @@ const ShowTime = () => {
     setTheatre(event.target.value);
     setNumberOfSeats(theatres.find(theatre => theatre._id == event.target.value ).numberOfSeats);
   };  
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const showtimeData = {
+      movie,
+      theatre,
+      startTime: startTime, 
+      endTime: endTime,
+      date: date,
+      price: {
+        standard: parseFloat(standardPrice),
+        premium: parseFloat(premiumPrice),
+        vip: parseFloat(vipPrice),
+      },
+    };
+
+    try {
+      const res = await fetch("/api/showtimes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(showtimeData),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to add showtime");
+      }
+
+      await res.json();
+
+      setMovie("");
+      setTheatre("");
+      setDate(null);
+      setStartTime(null);
+      setEndTime(null);
+      setStandardPrice("");
+      setPremiumPrice("");
+      setVipPrice("");
+
+    } catch (error) {
+      console.error("Error adding showtime:", error);
+    }
+  };
 
   return (  
     <LocalizationProvider dateAdapter={AdapterDayjs}>  
@@ -84,6 +136,8 @@ const ShowTime = () => {
                 <FormControl fullWidth>
                   <DatePicker
                     label="Date"
+                    value={date}
+                    onChange={(newValue) => setDate(dayjs(newValue))}
                     sx={{
                       '& .MuiSvgIcon-root': {
                         color: '#FF6B6B', 
@@ -96,6 +150,8 @@ const ShowTime = () => {
                 <FormControl fullWidth>  
                   <TimePicker 
                     label="Start Time" 
+                    value={startTime}
+                    onChange={(newValue) => setStartTime(dayjs(newValue))}
                     sx={{
                       '& .MuiSvgIcon-root': {
                         color: '#FF6B6B', 
@@ -108,6 +164,8 @@ const ShowTime = () => {
                 <FormControl fullWidth>  
                   <TimePicker
                    label="End Time" 
+                   value={endTime}
+                   onChange={(newValue) => setEndTime(dayjs(newValue))}
                     sx={{
                       '& .MuiSvgIcon-root': {
                         color: '#FF6B6B', 
@@ -147,6 +205,8 @@ const ShowTime = () => {
                   <InputLabel htmlFor="outlined-adornment-amount-standard">Standard</InputLabel>  
                   <OutlinedInput  
                     id="outlined-adornment-amount-standard"  
+                    value={standardPrice}
+                    onChange={(e) => setStandardPrice(e.target.value)}
                     startAdornment={  
                       <InputAdornment position="start">$</InputAdornment>  
                     }  
@@ -158,6 +218,8 @@ const ShowTime = () => {
                   <InputLabel htmlFor="outlined-adornment-amount-premium">Premium</InputLabel>  
                   <OutlinedInput  
                     id="outlined-adornment-amount-premium"  
+                    value={premiumPrice}
+                    onChange={(e) => setPremiumPrice(e.target.value)}
                     startAdornment={  
                       <InputAdornment position="start">$</InputAdornment>  
                     }  
@@ -169,12 +231,18 @@ const ShowTime = () => {
                   <InputLabel htmlFor="outlined-adornment-amount-vip">VIP</InputLabel>  
                   <OutlinedInput  
                     id="outlined-adornment-amount-vip"  
+                    value={vipPrice}
+                    onChange={(e) => setVipPrice(e.target.value)}
                     startAdornment={  
                       <InputAdornment position="start">$</InputAdornment>  
                     }  
                     label="Amount"  
                   />  
-                </FormControl>  
+                </FormControl>
+
+                <Button variant="contained" onClick={handleSubmit}>
+                  Add ShowTime
+                </Button>
               </Stack>  
             </Grid>  
 

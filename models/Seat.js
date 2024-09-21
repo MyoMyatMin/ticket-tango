@@ -9,7 +9,7 @@ const SeatSchema = new mongoose.Schema({
     type: {
         type: String,
         required: true,
-        enum: ['Standard', 'Premium', 'VIP'], 
+        enum: ['standard', 'premium', 'vip'], 
     },
     isAvailable: {
         type: Boolean,

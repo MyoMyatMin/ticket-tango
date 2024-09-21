@@ -42,14 +42,17 @@ export async function POST(request) {
       return res.status(400).json({ message: 'Invalid movie ID' });
     }
 
+    movieExists.isOngoing = true;
+    await movieExists.save({ session });
+
     const seats = [];
-    const seatTypes = ['Standard', 'Premium', 'VIP'];
+    const seatTypes = ['standard', 'premium', 'vip'];
 
     seatTypes.forEach(type => {
         const seatCount = theatreExists.numberOfSeats[type];
         for (let i = 0; i < seatCount; i++) {
             seats.push(new Seat({
-                name: `${type} Seat ${i + 1}`,
+                name: `${type.charAt(0).toLocaleUpperCase()}${i + 1}`,
                 type,
                 isAvailable: true
             }));

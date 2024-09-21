@@ -18,15 +18,17 @@ export async function GET(request, { params }) {
       return NextResponse.json({ error: "Movie not found" }, { status: 404 });
     }
 
-    // Fetch the showtimes for the specific movie
-    const showtimes = await ShowTime.find({ movie: movie._id }).populate(
-      "theatre seats"
-    );
+    // // Fetch the showtimes for the specific movie
+    // const showtimes = await ShowTime.find({ movie: movie._id }).populate(
+    //   "theatre seats"
+    // );
 
-    return NextResponse.json({
-      ...movie.toObject(),
-      showtimes,
-    });
+    // return NextResponse.json({
+    //   ...movie.toObject(),
+    //   showtimes,
+    // });
+
+    return NextResponse.json(movie)
   } catch (error) {
     console.error("Error in GET /api/movies/[id]:", error);
     return NextResponse.json(
