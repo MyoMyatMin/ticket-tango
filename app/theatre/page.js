@@ -23,8 +23,9 @@ const TheatrePage = () => {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const [filterSelectedTime, setFilterSelectedTime] = useState(null);
   const [theatreName, setTheatreName] = useState(null);
-  const seats = getSeats();
+  // const seats = getSeats();
   const [availableTimes, setAvailableTimes] = useState([]);
+  const [seats, setSeats] = useState([]);
   const searchParams = useSearchParams();
   const movieid = searchParams.get("movieid");
   const time = searchParams.get("time");
@@ -115,6 +116,8 @@ const TheatrePage = () => {
         console.log("Matching showtimes found:", filteredShowtimes[0].theatre);
 
         setTheatreName(filteredShowtimes[0].theatre);
+        setSeats(filteredShowtimes[0].seats);
+        console.log("Seats:", filteredShowtimes[0].seats);
       } else {
         console.log("No matching showtimes found.");
         setTheatreName(null);

@@ -1,6 +1,6 @@
 "use client";
 import Seat from "@/components/Seat";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Typography, Stack, Box, Button } from "@mui/material";
 import Screen from "@/components/Screen";
 import Grid from "@mui/material/Grid2";
@@ -9,6 +9,12 @@ import { getSeats } from "@/lib/helpers/getSeats";
 
 const Theatre = ({ isadmin, seats }) => {
   const [selectedSeats, setSelectedSeats] = useState([]);
+
+  useEffect(() => {
+    // This code will run whenever the `seats` prop changes
+    console.log("Seats updated:", seats);
+    // Update any internal state or perform actions based on new seats
+  }, [seats]);
   const handleSeatSelect = (seatNumber) => {
     const seat = `${seatNumber}`;
 
@@ -29,7 +35,7 @@ const Theatre = ({ isadmin, seats }) => {
         <Grid>
           <Grid container display="flex" justifyContent="center" spacing={2}>
             {seats
-              .filter((seat) => seat.type === "Standard")
+              .filter((seat) => seat.type === "standard")
               .map((seat, index) => (
                 <Grid xs={6} key={index}>
                   <Seat
@@ -47,7 +53,7 @@ const Theatre = ({ isadmin, seats }) => {
         <Grid>
           <Grid container display="flex" justifyContent="center" spacing={2}>
             {seats
-              .filter((seat) => seat.type === "Premium")
+              .filter((seat) => seat.type === "premium")
               .map((seat, index) => (
                 <Grid xs={2} key={index}>
                   <Seat
@@ -65,7 +71,7 @@ const Theatre = ({ isadmin, seats }) => {
         <Grid>
           <Grid container display="flex" justifyContent="center" spacing={2}>
             {seats
-              .filter((seat) => seat.type === "VIP")
+              .filter((seat) => seat.type === "vip")
               .map((seat, index) => (
                 <Grid xs={2} key={index}>
                   <Seat
