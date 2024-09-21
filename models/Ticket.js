@@ -11,7 +11,7 @@ const TicketSchema = new mongoose.Schema({
       ref: 'ShowTime',
       required: true,
     },
-    seat: {
+    seats: {
       type: [mongoose.Schema.Types.ObjectId],
       ref: 'Seat',
       required: true,

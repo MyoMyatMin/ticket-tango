@@ -41,20 +41,26 @@ export async function POST(request) {
 
         const body = await request.json();
 
-        const { seat, username, price } = body;
+        const { seats, username, price } = body;
 
-        const updatedSeat = await Seat.findByIdAndUpdate(seat, { isAvailable: false }, { new: true }, { session });
-    
-        if (!updatedSeat) {
-            await session.abortTransaction();
-            session.endSession();
-            return NextResponse.json({ error: 'Movie not found' }, { status: 404 });
+        // const updatedSeat = await Seat.findByIdAndUpdate(seat, { isAvailable: false }, { new: true }, { session });
+
+        const updatedSeats = await Seat.updateMany(
+          { _id: { $in: seats }, isAvailable: true },  // Ensure only available seats are updated
+          { $set: { isAvailable: false } },
+          { session }
+        );
+
+        if (updatedSeats.nModified === 0) {
+          await session.abortTransaction();
+          session.endSession();
+          return NextResponse.json({ error: 'No available seats found or already booked' }, { status: 404 });
         }
 
         const result = await Seat.aggregate([
             {
                 $match: {
-                    _id: new mongoose.Types.ObjectId(seat) 
+                    _id: new mongoose.Types.ObjectId(seats[0]) 
                 }
             },
             {
@@ -77,7 +83,7 @@ export async function POST(request) {
 
         const ticket = new Ticket({
             username, 
-            seat,
+            seats,
             showtime,
             price,
         })
