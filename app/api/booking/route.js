@@ -1,8 +1,36 @@
 import dbConnect from "@/lib/mongodb";
+import Movie from "@/models/Movie";
 import Seat from "@/models/Seat";
+import ShowTime from "@/models/ShowTime";
 import Ticket from "@/models/Ticket";
 import mongoose from "mongoose";
 import { NextResponse } from "next/server";
+
+export async function GET() {
+    try {
+      await dbConnect();
+      const movies = await Movie.find({});
+      const moviesWithShowtimes = await Promise.all(
+        movies
+        .filter(movie => movie.isOngoing)
+        .map(async (movie) => {
+          const showtimes = await ShowTime.find({ movie: movie._id }).populate(
+            "theatre seats"
+          );
+  
+          return {
+            ...movie.toObject(),
+            showtimes,
+          };
+        })
+      );
+  
+      return NextResponse.json(moviesWithShowtimes);
+    } catch (error) {
+      console.error("Error in GET /api/movies:", error);
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+  }
 
 export async function POST(request) {
     const session = await mongoose.startSession();
