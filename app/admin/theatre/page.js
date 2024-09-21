@@ -54,7 +54,7 @@ export default function TheatrePage() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value)
+    // console.log(name, value)
 
     setSelectedTheatre((prev) => {
       if (name === 'name') {

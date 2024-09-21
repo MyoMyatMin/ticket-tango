@@ -49,7 +49,7 @@ const TheatrePage = () => {
       fetchMovieData(movieid);
     }
   }, [movieid]);
-  console.log(availableTimes);
+  // console.log(availableTimes);
 
   if (!movie) {
     return (
@@ -74,7 +74,7 @@ const TheatrePage = () => {
           ml={4}
           mb={4}
         >
-          {movie.title} {/* Display the selected movie */}
+          {movie.title}
         </Typography>
 
         <Grid container spacing={2} sx={{ ml: 4, mb: 4 }}>

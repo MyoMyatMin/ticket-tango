@@ -123,7 +123,6 @@ const Movies = ({ movies }) => {
           "&::-webkit-scrollbar": { display: "none" },
         }}
       >
-        {console.log(movies)}
         {movies
         .filter(movie => movie.isOngoing)
         .map((movie, index) => (
