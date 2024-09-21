@@ -44,7 +44,7 @@ export default function Home() {
       }}
     >
       <Box sx={{ maxWidth: "600px", margin: "auto", width: "100%" }}>
-        <QuickSearch movies={movies} />
+        <QuickSearch movies={movies.filter(movie => movie.isOngoing)} />
       </Box>
 
       <Divider sx={{ borderColor: "primary.main", marginX: 2 }} />

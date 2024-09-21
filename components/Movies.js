@@ -123,7 +123,10 @@ const Movies = ({ movies }) => {
           "&::-webkit-scrollbar": { display: "none" },
         }}
       >
-        {movies.map((movie, index) => (
+        {console.log(movies)}
+        {movies
+        .filter(movie => movie.isOngoing)
+        .map((movie, index) => (
           <MovieCard key={index} {...movie} />
         ))}
       </Box>
@@ -145,7 +148,9 @@ const Movies = ({ movies }) => {
           "&::-webkit-scrollbar": { display: "none" },
         }}
       >
-        {movies.map((movie, index) => (
+        {movies
+        .filter(movie => movie.isOngoing == false)
+        .map((movie, index) => (
           <MovieCard key={index} {...movie} />
         ))}
       </Box>
