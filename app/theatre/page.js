@@ -254,49 +254,7 @@ const TheatrePage = () => {
         />
         <Divider sx={{ borderColor: "primary.main", my: 4 }} />
 
-        <Grid container spacing={2} sx={{ ml: 4, mb: 4 }}>
-          <Grid size={7}>
-            <Theatre isadmin={false} seats={seats} />
-          </Grid>
-
-          <Grid size={3} sx={{ ml: 4, mb: 8 }}>
-            <Table>
-              <TableBody sx={{ border: "2px solid #FF6B6B" }}>
-                <TableRow>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography>Total Seats:</Typography>
-                  </TableCell>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography>3</Typography>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography>Selected Seats:</Typography>
-                  </TableCell>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography>P6, P7, P8</Typography>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography>Price:</Typography>
-                  </TableCell>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography>$25</Typography>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell sx={{ border: "none" }}>
-                    <Button variant="contained" color="secondary">
-                      Book Now
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </Grid>
-        </Grid>
+        <Theatre isadmin={false} seats={seats} />
       </Box>
     </Container>
   );
