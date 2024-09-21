@@ -62,7 +62,9 @@ export default function QuickSearch({ movies }) {
       router.push(
         `/theatre?movieid=${encodeURIComponent(
           selectedMovie
-        )}&time=${encodeURIComponent(selectedTime.time)}`
+        )}&time=${encodeURIComponent(
+          selectedTime.date + " " + selectedTime.time
+        )}`
       );
     }
   };

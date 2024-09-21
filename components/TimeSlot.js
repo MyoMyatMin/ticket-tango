@@ -1,28 +1,31 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import { Button, Typography, Box, Container, Paper } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
-export default function Component({ availableDates, selectedTime }) {
+export default function TimeSlot({
+  availableDates,
+  selectedTime,
+  onTimeSlotChange,
+}) {
   const [uniqueDatesWithTimeSlots, setUniqueDatesWithTimeSlots] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
 
   const formatDate = (date) => {
-    return date.toLocaleDateString("en-US", {
+    return new Date(date).toLocaleDateString("en-US", {
       weekday: "short",
       month: "short",
       day: "numeric",
     });
   };
+  console.log(availableDates);
 
   const groupDatesWithTimeSlots = (dates) => {
     const grouped = {};
 
-    dates.forEach((date) => {
-      const day = date.toDateString();
-      const time = date.toLocaleTimeString("en-US", {
+    dates.forEach((entry) => {
+      const day = new Date(entry.date).toDateString();
+      const time = new Date(entry.time).toLocaleTimeString("en-US", {
         hour: "numeric",
         minute: "numeric",
         hour12: true,
@@ -30,7 +33,7 @@ export default function Component({ availableDates, selectedTime }) {
 
       if (!grouped[day]) {
         grouped[day] = {
-          date: date,
+          date: new Date(entry.date),
           timeSlots: [time],
         };
       } else {
@@ -45,36 +48,66 @@ export default function Component({ availableDates, selectedTime }) {
     if (availableDates && availableDates.length > 0) {
       const groupedDates = groupDatesWithTimeSlots(availableDates);
       setUniqueDatesWithTimeSlots(groupedDates);
+      console.log("groupedDates", groupedDates);
+      if (selectedTime !== null && groupedDates.length > 0) {
+        const selectedDateFromTime = new Date(selectedTime);
+        const formattedSelectedTime = selectedDateFromTime.toLocaleTimeString(
+          "en-US",
+          {
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true,
+          }
+        );
 
-      // Only set default selectedDate if selectedTime is not null
-      if (selectedTime !== null && !selectedDate && groupedDates.length > 0) {
-        setSelectedDate(groupedDates[0].date);
+        const selectedDateEntry = groupedDates.find(
+          (entry) =>
+            entry.date.toDateString() === selectedDateFromTime.toDateString()
+        );
+
+        if (selectedDateEntry) {
+          setSelectedDate(selectedDateEntry.date);
+          const matchingTimeSlot = selectedDateEntry.timeSlots.find(
+            (time) => time === formattedSelectedTime
+          );
+
+          if (matchingTimeSlot) {
+            setSelectedTimeSlot(matchingTimeSlot);
+            onTimeSlotChange({
+              time: matchingTimeSlot,
+              date: selectedDateEntry.date,
+            });
+          } else {
+            setSelectedTimeSlot(null);
+          }
+        }
       }
     }
   }, [availableDates, selectedTime]);
 
   useEffect(() => {
     if (selectedDate && uniqueDatesWithTimeSlots.length > 0) {
-      if (selectedTime !== null) {
-        const formattedSelectedTime = new Date(selectedTime).toLocaleTimeString(
-          "en-US",
-          { hour: "numeric", minute: "numeric", hour12: true }
+      const selectedDateEntry = uniqueDatesWithTimeSlots.find(
+        (entry) => entry.date.toDateString() === selectedDate.toDateString()
+      );
+
+      if (selectedDateEntry) {
+        const formattedSelectedTime = selectedTime
+          ? new Date(selectedTime).toLocaleTimeString("en-US", {
+              hour: "numeric",
+              minute: "numeric",
+              hour12: true,
+            })
+          : selectedTimeSlot;
+
+        const matchingTimeSlot = selectedDateEntry.timeSlots.find(
+          (time) => time === formattedSelectedTime
         );
 
-        const selectedDateEntry = uniqueDatesWithTimeSlots.find(
-          (entry) => entry.date.toDateString() === selectedDate.toDateString()
-        );
-
-        if (selectedDateEntry) {
-          const matchingTimeSlot = selectedDateEntry.timeSlots.find(
-            (time) => time === formattedSelectedTime
-          );
-          setSelectedTimeSlot(
-            matchingTimeSlot || selectedDateEntry.timeSlots[0]
-          );
+        if (matchingTimeSlot) {
+          setSelectedTimeSlot(matchingTimeSlot);
+          onTimeSlotChange({ time: matchingTimeSlot, date: selectedDate });
         }
-      } else {
-        setSelectedTimeSlot(null); // Clear selectedTimeSlot if selectedTime is null
       }
     }
   }, [selectedDate, uniqueDatesWithTimeSlots, selectedTime]);
@@ -131,7 +164,10 @@ export default function Component({ availableDates, selectedTime }) {
                         selectedTimeSlot === time ? "contained" : "outlined"
                       }
                       fullWidth
-                      onClick={() => setSelectedTimeSlot(time)}
+                      onClick={() => {
+                        setSelectedTimeSlot(time);
+                        onTimeSlotChange({ time, date: selectedDate }); // Pass both time and date
+                      }}
                     >
                       {time}
                     </Button>
