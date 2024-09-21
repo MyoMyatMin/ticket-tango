@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Movies from "@/components/Movies";
 import QuickSearch from "@/components/QuickSearch";
 import { Box, Divider, Typography } from "@mui/material";
@@ -13,7 +13,7 @@ export default function Home() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch("/api/movies");
+        const response = await fetch("/api/booking");
         if (!response.ok) {
           throw new Error("Failed to fetch movies");
         }
@@ -28,6 +28,8 @@ export default function Home() {
 
     fetchMovies();
   }, []);
+
+  console.log(movies);
 
   if (loading) return <Typography>Loading movies...</Typography>;
   if (error) return <Typography>Error: {error}</Typography>;
@@ -44,7 +46,7 @@ export default function Home() {
       }}
     >
       <Box sx={{ maxWidth: "600px", margin: "auto", width: "100%" }}>
-        <QuickSearch movies={movies.filter(movie => movie.isOngoing)} />
+        <QuickSearch movies={movies.filter((movie) => movie.isOngoing)} />
       </Box>
 
       <Divider sx={{ borderColor: "primary.main", marginX: 2 }} />

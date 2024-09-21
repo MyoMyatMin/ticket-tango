@@ -20,6 +20,7 @@ export default function QuickSearch({ movies }) {
   const [dateTime, setDateTime] = useState("");
   const [availableTimes, setAvailableTimes] = useState([]);
   const router = useRouter();
+  console.log(movies);
 
   useEffect(() => {
     if (selectedMovie) {
@@ -28,11 +29,13 @@ export default function QuickSearch({ movies }) {
         setAvailableTimes(
           movie.showtimes.map((showtime) => ({
             id: showtime._id,
-            time: new Date(showtime.startTime).toLocaleString("en-US", {
+            date: new Date(showtime.date).toLocaleDateString("en-US", {
               weekday: "short",
               day: "numeric",
               month: "short",
               year: "numeric",
+            }),
+            time: new Date(showtime.startTime).toLocaleTimeString("en-US", {
               hour: "numeric",
               minute: "numeric",
               hour12: true,
@@ -120,7 +123,7 @@ export default function QuickSearch({ movies }) {
                 {availableTimes.length > 0 ? (
                   availableTimes.map((time) => (
                     <MenuItem key={time.id} value={time.id}>
-                      {time.time}
+                      {time.date} {time.time}
                     </MenuItem>
                   ))
                 ) : (
