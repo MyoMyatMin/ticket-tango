@@ -1,10 +1,51 @@
 "use client"; 
 import MoviePoster from "@/components/MoviePoster";
-import React from "react";
+import React, { useState } from "react";
 import { Table, TableBody, TableCell, Paper, TableRow, TableContainer, Typography, Box, Button, TextField, Stack } from "@mui/material";
 import Grid from '@mui/material/Grid2';
+import { useSearchParams } from "next/navigation";
 
 const TicketPage = () => {
+  const searchParams = useSearchParams();
+  const seatNumber = searchParams.get("seatNumber");
+  const selectedSeats = searchParams.get("selectedSeats");
+  const total = searchParams.get("total");
+  const [user, setUser] = useState('');
+
+  const handlePaySubmit = async () => {
+    const payload = {
+      seats: Array.isArray(selectedSeats) ? selectedSeats : selectedSeats.split(','),
+      price: parseFloat(total), 
+      username: user,
+    };
+
+    // console.log(payload)
+
+    try {
+      const response = await fetch(`/api/booking`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send booking');
+      }
+
+      const data = await response.json();
+      console.log('Booking successful:', data);
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  }
+
+  const handleChange = (e) => {
+    const { value } = e.target
+    setUser(value)
+  }
+
   return (
       <Grid container spacing={4}>
         <Grid sx={{ paddingLeft:5, paddingRight: 4 }} size={4}>
@@ -50,7 +91,7 @@ const TicketPage = () => {
                       <Typography variant="h6">Selected Seat:</Typography>
                     </TableCell>
                     <TableCell sx={{ border: "none" }}>
-                      <Typography variant="h6">A1, A2</Typography>
+                      <Typography variant="h6">{seatNumber}</Typography>
                     </TableCell>
                   </TableRow>
 
@@ -68,16 +109,21 @@ const TicketPage = () => {
                       <Typography variant="h6">Total:</Typography>
                     </TableCell>
                     <TableCell sx={{ border: "none" }}>
-                      <Typography variant="h6">$25</Typography>
+                      <Typography variant="h6">${total}</Typography>
                     </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
             </TableContainer>
 
-            <TextField label="User" required fullWidth />
+            <TextField 
+              label="User"
+              required
+              fullWidth
+              onChange={handleChange}
+              />
 
-            <Button variant="contained">Pay</Button> 
+            <Button variant="contained" onClick={handlePaySubmit}>Pay</Button> 
           </Stack>
         </Grid>
       </Grid>

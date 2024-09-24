@@ -18,7 +18,7 @@ export default function TimeSlot({
       day: "numeric",
     });
   };
-  console.log(availableDates);
+  // console.log(availableDates);
 
   const groupDatesWithTimeSlots = (dates) => {
     const grouped = {};
@@ -48,7 +48,7 @@ export default function TimeSlot({
     if (availableDates && availableDates.length > 0) {
       const groupedDates = groupDatesWithTimeSlots(availableDates);
       setUniqueDatesWithTimeSlots(groupedDates);
-      console.log("groupedDates", groupedDates);
+      // console.log("groupedDates", groupedDates);
       if (selectedTime !== null && groupedDates.length > 0) {
         const selectedDateFromTime = new Date(selectedTime);
         const formattedSelectedTime = selectedDateFromTime.toLocaleTimeString(

@@ -6,21 +6,48 @@ import Screen from "@/components/Screen";
 import Grid from "@mui/material/Grid2";
 import ChairIcon from "@mui/icons-material/Chair";
 import { getSeats } from "@/lib/helpers/getSeats";
+import { useRouter } from "next/navigation";
 
-const Theatre = ({ isadmin, seats }) => {
+const Theatre = ({ seats, price, movieid }) => {
   const [selectedSeats, setSelectedSeats] = useState([]);
+  const [total, setTotal] = useState(0);
+  const router = useRouter();
+
+  // console.log(seats)
 
   useEffect(() => {
+    setTotal(0);
+    setSelectedSeats([]);
     // This code will run whenever the `seats` prop changes
-    console.log("Seats updated:", seats);
+    // console.log("Seats updated:", seats);
     // Update any internal state or perform actions based on new seats
   }, [seats]);
+
   const handleSeatSelect = (seatNumber) => {
-    const seat = `${seatNumber}`;
+    // console.log(seatNumber)
+
+    const seat = seatNumber;
+
+    const seatType = seatNumber.name.charAt(0);
+    let seatPrice = 0;
+
+    if (seatType === 'S') {
+        seatPrice = price.standard;
+    } else if (seatType === 'P') {
+        seatPrice = price.premium;
+    } else if (seatType === 'V') {
+        seatPrice = price.vip;
+    }
+
+    setTotal((prevTotal) => prevTotal + seatPrice);
 
     setSelectedSeats((prev) =>
       prev.includes(seat) ? prev.filter((s) => s !== seat) : [...prev, seat]
     );
+  };
+
+  const handleBookNow = () => {
+    router.push(`/ticket?selectedSeats=${selectedSeats.map(s => s._id).join(',')}&seatNumber=${selectedSeats.map(s => s.name).join(',')}&total=${total}`);
   };
 
   return (
@@ -42,11 +69,11 @@ const Theatre = ({ isadmin, seats }) => {
                     .map((seat, index) => (
                       <Grid xs={6} key={index}>
                         <Seat
-                          seatNumber={seat.name}
+                          seatNumber={seat}
                           isAvailable={seat.isAvailable}
                           price={seat.price}
                           color={"primary"}
-                          {...(!isadmin && { onSelect: handleSeatSelect })}
+                          onSelect={handleSeatSelect}
                         />
                       </Grid>
                     ))}
@@ -60,11 +87,11 @@ const Theatre = ({ isadmin, seats }) => {
                     .map((seat, index) => (
                       <Grid xs={2} key={index}>
                         <Seat
-                          seatNumber={seat.name}
+                          seatNumber={seat}
                           isAvailable={seat.isAvailable}
                           price={seat.price}
                           color={"secondary"}
-                          {...(!isadmin && { onSelect: handleSeatSelect })}
+                          onSelect={handleSeatSelect}
                         />
                       </Grid>
                     ))}
@@ -78,11 +105,11 @@ const Theatre = ({ isadmin, seats }) => {
                     .map((seat, index) => (
                       <Grid xs={2} key={index}>
                         <Seat
-                          seatNumber={seat.name}
+                          seatNumber={seat}
                           isAvailable={seat.isAvailable}
                           price={seat.price}
                           color={"info"}
-                          {...(!isadmin && { onSelect: handleSeatSelect })}
+                          onSelect={handleSeatSelect}
                         />
                       </Grid>
                     ))}
@@ -133,7 +160,7 @@ const Theatre = ({ isadmin, seats }) => {
                   <Typography>Selected Seats:</Typography>
                 </TableCell>
                 <TableCell sx={{ maxWidth: '200px', border: "none"}} >
-                  <Typography> {selectedSeats.length > 0 ? selectedSeats.join(", ") : "No seats selected"}</Typography>
+                  <Typography> {selectedSeats.length > 0 ? selectedSeats.map(s => s.name).join(", ") : "No seats selected"}</Typography>
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -141,13 +168,13 @@ const Theatre = ({ isadmin, seats }) => {
                   <Typography>Price:</Typography>
                 </TableCell>
                 <TableCell sx={{ borderColor: "primary.main"}}>
-                  <Typography>$25</Typography>
+                  <Typography>{total}</Typography>
                 </TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell colSpan={2}>
-                    <Button variant="contained" color="secondary">
+                    <Button variant="contained" color="secondary" onClick={handleBookNow}>
                       Book Now
                     </Button>
                   </TableCell>

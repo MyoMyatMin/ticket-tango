@@ -24,6 +24,7 @@ const TheatrePage = () => {
   const [theatreName, setTheatreName] = useState(null);
   const [availableTimes, setAvailableTimes] = useState([]);
   const [seats, setSeats] = useState([]);
+  const [price, setPrice] = useState(null);
   const searchParams = useSearchParams();
   const movieid = searchParams.get("movieid");
   const time = searchParams.get("time");
@@ -36,6 +37,7 @@ const TheatrePage = () => {
           throw new Error("Network response was not ok");
         }
         const movieData = await response.json();
+
         setMovie(movieData);
 
         setAvailableTimes(
@@ -105,18 +107,21 @@ const TheatrePage = () => {
       setSelectedTimeSlot(selectedFilter.date);
       setFilterSelectedTime(selectedFilter);
 
-      console.log("Selected time slot:", selectedFilter);
+      // console.log("Selected time slot:", selectedFilter);
 
       const filteredShowtimes = filterMovieByShowtime(movie, selectedFilter);
 
       if (filteredShowtimes.length > 0) {
-        console.log("Matching showtimes found:", filteredShowtimes[0].theatre);
+        // console.log("Matching showtimes found:", filteredShowtimes[0].theatre);
 
+        // console.log(filteredShowtimes[0].price)
+        setPrice(filteredShowtimes[0].price)
         setTheatreName(filteredShowtimes[0].theatre);
         setSeats(filteredShowtimes[0].seats);
-        console.log("Seats:", filteredShowtimes[0].seats);
+
+        // console.log("Seats:", filteredShowtimes[0].seats);
       } else {
-        console.log("No matching showtimes found.");
+        // console.log("No matching showtimes found.");
         setTheatreName(null);
       }
     } else {
@@ -251,7 +256,7 @@ const TheatrePage = () => {
         />
         <Divider sx={{ borderColor: "primary.main", my: 4 }} />
 
-        <Theatre isadmin={false} seats={seats} />
+        <Theatre price={price} seats={seats} movieid={movieid}/>
       </Box>
     </Container>
   );
