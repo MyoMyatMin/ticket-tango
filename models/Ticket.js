@@ -1,5 +1,7 @@
 
 import mongoose from 'mongoose';
+import ShowTime from './ShowTime';
+import Seat from './Seat';
 
 const TicketSchema = new mongoose.Schema({
     username: {
@@ -8,12 +10,12 @@ const TicketSchema = new mongoose.Schema({
     },
     showtime: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'ShowTime',
+      ref: ShowTime,
       required: true,
     },
     seats: {
       type: [mongoose.Schema.Types.ObjectId],
-      ref: 'Seat',
+      ref: Seat,
       required: true,
     },
     price: {

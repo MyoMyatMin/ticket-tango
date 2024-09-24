@@ -1,4 +1,7 @@
 import mongoose from 'mongoose';
+import Theatre from './Theatre';
+import Movie from './Movie';
+import Seat from './Seat';
 
 const ShowTimeSchema = new mongoose.Schema({
     startTime: {
@@ -20,17 +23,17 @@ const ShowTimeSchema = new mongoose.Schema({
     },
     theatre: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Theatre',
+        ref: Theatre,
         required: true,
     },
     movie: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Movie',
+        ref: Movie,
         required: true,
     },
     seats: {
         type: [mongoose.Schema.Types.ObjectId],
-        ref: 'Seat',
+        ref: Seat,
         required: true,
     }
 });
