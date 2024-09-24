@@ -20,7 +20,6 @@ export default function QuickSearch({ movies }) {
   const [dateTime, setDateTime] = useState("");
   const [availableTimes, setAvailableTimes] = useState([]);
   const router = useRouter();
-  console.log(movies);
 
   useEffect(() => {
     if (selectedMovie) {

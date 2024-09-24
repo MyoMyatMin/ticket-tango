@@ -15,7 +15,6 @@ import {
   TableRow,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { getSeats } from "@/lib/helpers/getSeats";
 import { useEffect, useState } from "react";
 
 const TheatrePage = () => {
@@ -23,13 +22,11 @@ const TheatrePage = () => {
   const [selectedTimeSlot, setSelectedTimeSlot] = useState(null);
   const [filterSelectedTime, setFilterSelectedTime] = useState(null);
   const [theatreName, setTheatreName] = useState(null);
-  // const seats = getSeats();
   const [availableTimes, setAvailableTimes] = useState([]);
   const [seats, setSeats] = useState([]);
   const searchParams = useSearchParams();
   const movieid = searchParams.get("movieid");
   const time = searchParams.get("time");
-  console.log(movie);
 
   useEffect(() => {
     async function fetchMovieData(movieID) {

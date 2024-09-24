@@ -12,12 +12,10 @@ export async function GET() {
       const movies = await Movie.find({});
       const moviesWithShowtimes = await Promise.all(
         movies
-        .filter(movie => movie.isOngoing)
+        // .filter(movie => movie.isOngoing)
         .map(async (movie) => {
-          const showtimes = await ShowTime.find({ movie: movie._id }).populate(
-            "theatre seats"
-          );
-  
+          const showtimes = await ShowTime.find({ movie: movie._id }).select('-theatre -seats');
+          
           return {
             ...movie.toObject(),
             showtimes,
@@ -27,7 +25,7 @@ export async function GET() {
   
       return NextResponse.json(moviesWithShowtimes);
     } catch (error) {
-      console.error("Error in GET /api/movies:", error);
+      console.error("Error in GET /api/booking:", error);
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
   }

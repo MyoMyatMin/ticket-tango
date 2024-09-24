@@ -29,8 +29,6 @@ export default function Home() {
     fetchMovies();
   }, []);
 
-  console.log(movies);
-
   if (loading) return <Typography>Loading movies...</Typography>;
   if (error) return <Typography>Error: {error}</Typography>;
 
