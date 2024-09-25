@@ -59,7 +59,7 @@ export default function QuickSearch({ movies }) {
       const selectedTime = availableTimes.find((time) => time.id === dateTime);
 
       router.push(
-        `/theatre?movieid=${encodeURIComponent(
+        `/booking?movieid=${encodeURIComponent(
           selectedMovie
         )}&time=${encodeURIComponent(
           selectedTime.date + " " + selectedTime.time

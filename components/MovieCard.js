@@ -20,7 +20,7 @@ const MovieCard = ({
 }) => {
   const router = useRouter();
   const handelSubmit = () => {
-    router.push(`/theatre?movieid=${encodeURIComponent(_id)}`);
+    router.push(`/booking?movieid=${encodeURIComponent(_id)}`);
   };
   return (
     <Card
