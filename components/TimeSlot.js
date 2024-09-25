@@ -157,7 +157,7 @@ export default function TimeSlot({
                     entry.date.toDateString() === selectedDate.toDateString()
                 )
                 .timeSlots.map((time) => (
-                  <Grid item xs={6} sm={4} key={time}>
+                  <Grid xs={6} sm={4} key={time}>
                     <Button
                       variant={
                         selectedTimeSlot === time ? "contained" : "outlined"

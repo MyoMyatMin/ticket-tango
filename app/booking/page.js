@@ -161,11 +161,11 @@ const TheatrePage = () => {
         </Typography>
 
         <Grid container spacing={2} sx={{ ml: 4, mb: 4 }}>
-          <Grid item xs={12} md={4}>
+          <Grid xs={12} md={4}>
             <MoviePoster imageUrl={movie.posterUrl} />
           </Grid>
 
-          <Grid item xs={12} md={8} offset={0.4}>
+          <Grid xs={12} md={8} offset={0.4}>
             <br />
             <Typography variant="h6" gutterBottom>
               Details
