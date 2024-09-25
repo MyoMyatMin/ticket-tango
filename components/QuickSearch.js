@@ -70,7 +70,7 @@ export default function QuickSearch({ movies }) {
 
   return (
     <>
-      <Typography variant="h5" component="div" gutterBottom>
+      <Typography variant="h5" component="div" gutterBottom sx={{ textAlign: "center"}}>
         Quick Search
       </Typography>
       <Card
