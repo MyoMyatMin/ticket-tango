@@ -25,6 +25,7 @@ const TheatrePage = () => {
   const [availableTimes, setAvailableTimes] = useState([]);
   const [seats, setSeats] = useState([]);
   const [price, setPrice] = useState(null);
+  const [showtimeid, setShowtimeid] = useState(null);
   const searchParams = useSearchParams();
   const movieid = searchParams.get("movieid");
   const time = searchParams.get("time");
@@ -115,9 +116,10 @@ const TheatrePage = () => {
         // console.log("Matching showtimes found:", filteredShowtimes[0].theatre);
 
         // console.log(filteredShowtimes[0].price)
-        setPrice(filteredShowtimes[0].price)
+        setPrice(filteredShowtimes[0].price);
         setTheatreName(filteredShowtimes[0].theatre);
         setSeats(filteredShowtimes[0].seats);
+        setShowtimeid(filteredShowtimes[0]._id);
 
         // console.log("Seats:", filteredShowtimes[0].seats);
       } else {
@@ -256,7 +258,12 @@ const TheatrePage = () => {
         />
         <Divider sx={{ borderColor: "primary.main", my: 4 }} />
 
-        <Theatre price={price} seats={seats} movieid={movieid}/>
+        <Theatre
+          price={price}
+          seats={seats}
+          movieid={movieid}
+          showtimeid={showtimeid}
+        />
       </Box>
     </Container>
   );

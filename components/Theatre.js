@@ -19,7 +19,7 @@ import ChairIcon from "@mui/icons-material/Chair";
 import { getSeats } from "@/lib/helpers/getSeats";
 import { useRouter } from "next/navigation";
 
-const Theatre = ({ seats, price, movieid }) => {
+const Theatre = ({ seats, price, movieid, showtimeid }) => {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [total, setTotal] = useState(0);
   const router = useRouter();
@@ -61,7 +61,7 @@ const Theatre = ({ seats, price, movieid }) => {
 
   const handleBookNow = () => {
     router.push(
-      `/ticket?selectedSeats=${selectedSeats
+      `/ticket?showtimeid=${showtimeid}&selectedSeats=${selectedSeats
         .map((s) => s._id)
         .join(",")}&seatNumber=${selectedSeats
         .map((s) => s.name)
@@ -222,6 +222,19 @@ const Theatre = ({ seats, price, movieid }) => {
                     variant="contained"
                     color="secondary"
                     onClick={handleBookNow}
+                    disabled={selectedSeats.length === 0}
+                    sx={{
+                      backgroundColor:
+                        selectedSeats.length === 0
+                          ? "secondary.main"
+                          : undefined,
+                      color: "white",
+                      "&.Mui-disabled": {
+                        backgroundColor: "secondary.main",
+                        color: "white",
+                        opacity: 0.5,
+                      },
+                    }}
                   >
                     Book Now
                   </Button>
