@@ -1,7 +1,18 @@
 "use client";
 import Seat from "@/components/Seat";
 import { useState, useEffect } from "react";
-import { Typography, Stack, Box, Button, Table, TableBody, TableRow, TableCell, TableContainer, TableFooter } from "@mui/material";
+import {
+  Typography,
+  Stack,
+  Box,
+  Button,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableContainer,
+  TableFooter,
+} from "@mui/material";
 import Screen from "@/components/Screen";
 import Grid from "@mui/material/Grid2";
 import ChairIcon from "@mui/icons-material/Chair";
@@ -31,23 +42,31 @@ const Theatre = ({ seats, price, movieid }) => {
     const seatType = seatNumber.name.charAt(0);
     let seatPrice = 0;
 
-    if (seatType === 'S') {
-        seatPrice = price.standard;
-    } else if (seatType === 'P') {
-        seatPrice = price.premium;
-    } else if (seatType === 'V') {
-        seatPrice = price.vip;
+    if (seatType === "S") {
+      seatPrice = price.standard;
+    } else if (seatType === "P") {
+      seatPrice = price.premium;
+    } else if (seatType === "V") {
+      seatPrice = price.vip;
     }
 
-    setTotal((prevTotal) => prevTotal + seatPrice);
-
-    setSelectedSeats((prev) =>
-      prev.includes(seat) ? prev.filter((s) => s !== seat) : [...prev, seat]
-    );
+    if (selectedSeats.includes(seat)) {
+      setSelectedSeats((prev) => prev.filter((s) => s !== seat));
+      setTotal((prevTotal) => prevTotal - seatPrice);
+    } else {
+      setSelectedSeats((prev) => [...prev, seat]);
+      setTotal((prevTotal) => prevTotal + seatPrice);
+    }
   };
 
   const handleBookNow = () => {
-    router.push(`/ticket?selectedSeats=${selectedSeats.map(s => s._id).join(',')}&seatNumber=${selectedSeats.map(s => s.name).join(',')}&total=${total}`);
+    router.push(
+      `/ticket?selectedSeats=${selectedSeats
+        .map((s) => s._id)
+        .join(",")}&seatNumber=${selectedSeats
+        .map((s) => s.name)
+        .join(",")}&total=${total}`
+    );
   };
 
   return (
@@ -61,9 +80,19 @@ const Theatre = ({ seats, price, movieid }) => {
           <Screen />
 
           <Grid>
-            <Grid container spacing={4} direction="column" justifyContent="center">
+            <Grid
+              container
+              spacing={4}
+              direction="column"
+              justifyContent="center"
+            >
               <Grid>
-                <Grid container display="flex" justifyContent="center" spacing={2}>
+                <Grid
+                  container
+                  display="flex"
+                  justifyContent="center"
+                  spacing={2}
+                >
                   {seats
                     .filter((seat) => seat.type === "standard")
                     .map((seat, index) => (
@@ -81,7 +110,12 @@ const Theatre = ({ seats, price, movieid }) => {
               </Grid>
 
               <Grid>
-                <Grid container display="flex" justifyContent="center" spacing={2}>
+                <Grid
+                  container
+                  display="flex"
+                  justifyContent="center"
+                  spacing={2}
+                >
                   {seats
                     .filter((seat) => seat.type === "premium")
                     .map((seat, index) => (
@@ -99,7 +133,12 @@ const Theatre = ({ seats, price, movieid }) => {
               </Grid>
 
               <Grid>
-                <Grid container display="flex" justifyContent="center" spacing={2}>
+                <Grid
+                  container
+                  display="flex"
+                  justifyContent="center"
+                  spacing={2}
+                >
                   {seats
                     .filter((seat) => seat.type === "vip")
                     .map((seat, index) => (
@@ -148,44 +187,51 @@ const Theatre = ({ seats, price, movieid }) => {
           <Table>
             <TableBody sx={{ border: "2px solid #FF6B6B" }}>
               <TableRow>
-                <TableCell sx={{ border: "none"}}>
+                <TableCell sx={{ border: "none" }}>
                   <Typography>Total Seats:</Typography>
                 </TableCell>
-                <TableCell sx={{ border: "none"}}>
+                <TableCell sx={{ border: "none" }}>
                   <Typography>{selectedSeats.length}</Typography>
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell sx={{ border: "none"}}>
+                <TableCell sx={{ border: "none" }}>
                   <Typography>Selected Seats:</Typography>
                 </TableCell>
-                <TableCell sx={{ maxWidth: '200px', border: "none"}} >
-                  <Typography> {selectedSeats.length > 0 ? selectedSeats.map(s => s.name).join(", ") : "No seats selected"}</Typography>
+                <TableCell sx={{ maxWidth: "200px", border: "none" }}>
+                  <Typography>
+                    {" "}
+                    {selectedSeats.length > 0
+                      ? selectedSeats.map((s) => s.name).join(", ")
+                      : "No seats selected"}
+                  </Typography>
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell sx={{ borderColor: "primary.main"}}>
+                <TableCell sx={{ borderColor: "primary.main" }}>
                   <Typography>Price:</Typography>
                 </TableCell>
-                <TableCell sx={{ borderColor: "primary.main"}}>
+                <TableCell sx={{ borderColor: "primary.main" }}>
                   <Typography>{total}</Typography>
                 </TableCell>
               </TableRow>
 
               <TableRow>
                 <TableCell colSpan={2}>
-                    <Button variant="contained" color="secondary" onClick={handleBookNow}>
-                      Book Now
-                    </Button>
-                  </TableCell>
-                </TableRow>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={handleBookNow}
+                  >
+                    Book Now
+                  </Button>
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
         </TableContainer>
       </Grid>
-
     </Grid>
-
   );
 };
 
