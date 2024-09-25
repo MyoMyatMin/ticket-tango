@@ -1,27 +1,28 @@
-"use client";  
+"use client";
 
-import { useEffect, useState } from "react";  
-import Box from "@mui/material/Box";  
-import InputLabel from "@mui/material/InputLabel";  
-import MenuItem from "@mui/material/MenuItem";  
-import FormControl from "@mui/material/FormControl";  
-import Select from "@mui/material/Select";  
-import Grid from "@mui/material/Grid2";  
-import { Button, InputAdornment, OutlinedInput, Stack } from "@mui/material";  
-import {  
-  DatePicker,  
-  LocalizationProvider,  
-  TimePicker,  
-} from "@mui/x-date-pickers";  
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";  
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";  
+import { useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Grid from "@mui/material/Grid2";
+import { Button, InputAdornment, OutlinedInput, Stack } from "@mui/material";
+import {
+  DatePicker,
+  LocalizationProvider,
+  TimePicker,
+} from "@mui/x-date-pickers";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import SampleTheatre from "@/components/SampleTheatre";
 import dayjs from "dayjs";
+import { set } from "mongoose";
 
-const ShowTime = () => {  
+const ShowTime = () => {
   const [numberOfSeats, setNumberOfSeats] = useState();
-  const [movie, setMovie] = useState("");  
-  const [theatre, setTheatre] = useState(""); 
+  const [movie, setMovie] = useState("");
+  const [theatre, setTheatre] = useState("");
   const [movies, setMovies] = useState([]);
   const [theatres, setTheatres] = useState([]);
   const [date, setDate] = useState(null);
@@ -50,14 +51,17 @@ const ShowTime = () => {
     fetchTheatres();
   }, []);
 
-  const handleMovie = (event) => {  
-    setMovie(event.target.value);  
-  };  
+  const handleMovie = (event) => {
+    setMovie(event.target.value);
+  };
 
-  const handleTheatre = (event) => {  
+  const handleTheatre = (event) => {
     setTheatre(event.target.value);
-    setNumberOfSeats(theatres.find(theatre => theatre._id == event.target.value ).numberOfSeats);
-  };  
+    setNumberOfSeats(
+      theatres.find((theatre) => theatre._id == event.target.value)
+        .numberOfSeats
+    );
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -65,7 +69,7 @@ const ShowTime = () => {
     const showtimeData = {
       movie,
       theatre,
-      startTime: startTime, 
+      startTime: startTime,
       endTime: endTime,
       date: date,
       price: {
@@ -98,40 +102,40 @@ const ShowTime = () => {
       setStandardPrice("");
       setPremiumPrice("");
       setVipPrice("");
-
+      setNumberOfSeats(null);
     } catch (error) {
       console.error("Error adding showtime:", error);
     }
   };
 
-  return (  
-    <LocalizationProvider dateAdapter={AdapterDayjs}>  
-      <DemoContainer components={["TimePicker", "DatePicker"]}>  
-        <Box sx={{ flexGrow: 1 }}>  
-          <Grid container spacing={2}>  
-            <Grid size={6}>  
-              <Stack spacing={2}>  
-                <FormControl fullWidth required>  
-                  <InputLabel id="movie-select-label">Movie</InputLabel>  
-                  <Select  
-                    labelId="movie-select-label"  
-                    id="movie-select"  
-                    value={movie}  
-                    label="Movie"  
-                    onChange={handleMovie}  
-                    sx={{  
-                      '& .MuiSelect-icon': {  
-                        color: '#FF6B6B', 
-                      },  
-                    }}  
-                  >  
-                   {movies.map((movie) => (
+  return (
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <DemoContainer components={["TimePicker", "DatePicker"]}>
+        <Box sx={{ flexGrow: 1 }}>
+          <Grid container spacing={2}>
+            <Grid size={6}>
+              <Stack spacing={2}>
+                <FormControl fullWidth required>
+                  <InputLabel id="movie-select-label">Movie</InputLabel>
+                  <Select
+                    labelId="movie-select-label"
+                    id="movie-select"
+                    value={movie}
+                    label="Movie"
+                    onChange={handleMovie}
+                    sx={{
+                      "& .MuiSelect-icon": {
+                        color: "#FF6B6B",
+                      },
+                    }}
+                  >
+                    {movies.map((movie) => (
                       <MenuItem key={movie._id} value={movie._id}>
                         {movie.title}
                       </MenuItem>
                     ))}
-                  </Select>  
-                </FormControl>  
+                  </Select>
+                </FormControl>
 
                 <FormControl fullWidth>
                   <DatePicker
@@ -139,124 +143,130 @@ const ShowTime = () => {
                     value={date}
                     onChange={(newValue) => setDate(dayjs(newValue))}
                     sx={{
-                      '& .MuiSvgIcon-root': {
-                        color: '#FF6B6B', 
-                        fontSize: '1.1rem',
+                      "& .MuiSvgIcon-root": {
+                        color: "#FF6B6B",
+                        fontSize: "1.1rem",
                       },
                     }}
                   />
                 </FormControl>
 
-                <FormControl fullWidth>  
-                  <TimePicker 
-                    label="Start Time" 
+                <FormControl fullWidth>
+                  <TimePicker
+                    label="Start Time"
                     value={startTime}
                     onChange={(newValue) => setStartTime(dayjs(newValue))}
                     sx={{
-                      '& .MuiSvgIcon-root': {
-                        color: '#FF6B6B', 
-                        fontSize: '1.1rem',
+                      "& .MuiSvgIcon-root": {
+                        color: "#FF6B6B",
+                        fontSize: "1.1rem",
                       },
                     }}
-                  />  
-                </FormControl>  
+                  />
+                </FormControl>
 
-                <FormControl fullWidth>  
+                <FormControl fullWidth>
                   <TimePicker
-                   label="End Time" 
-                   value={endTime}
-                   onChange={(newValue) => setEndTime(dayjs(newValue))}
+                    label="End Time"
+                    value={endTime}
+                    onChange={(newValue) => setEndTime(dayjs(newValue))}
                     sx={{
-                      '& .MuiSvgIcon-root': {
-                        color: '#FF6B6B', 
-                        fontSize: '1.1rem',
+                      "& .MuiSvgIcon-root": {
+                        color: "#FF6B6B",
+                        fontSize: "1.1rem",
                       },
                     }}
-                  />  
-                </FormControl>  
-              </Stack>  
-            </Grid>  
+                  />
+                </FormControl>
+              </Stack>
+            </Grid>
 
-            <Grid size={6}>  
-              <Stack spacing={2}>  
-                <FormControl fullWidth required>  
-                  <InputLabel id="theatre-select-label">Theatre</InputLabel>  
-                  <Select  
-                    labelId="theatre-select-label"  
-                    id="theatre-select"  
-                    value={theatre}  
-                    label="Theatre"  
-                    onChange={handleTheatre}  
-                    sx={{  
-                      '& .MuiSelect-icon': {  
-                        color: '#FF6B6B', 
-                      },  
-                    }}  
-                  >  
-                   {theatres.map((theatre) => (
+            <Grid size={6}>
+              <Stack spacing={2}>
+                <FormControl fullWidth required>
+                  <InputLabel id="theatre-select-label">Theatre</InputLabel>
+                  <Select
+                    labelId="theatre-select-label"
+                    id="theatre-select"
+                    value={theatre}
+                    label="Theatre"
+                    onChange={handleTheatre}
+                    sx={{
+                      "& .MuiSelect-icon": {
+                        color: "#FF6B6B",
+                      },
+                    }}
+                  >
+                    {theatres.map((theatre) => (
                       <MenuItem key={theatre._id} value={theatre._id}>
                         {theatre.name}
                       </MenuItem>
                     ))}
-                  </Select>  
-                </FormControl>  
+                  </Select>
+                </FormControl>
 
-                <FormControl fullWidth>  
-                  <InputLabel htmlFor="outlined-adornment-amount-standard">Standard</InputLabel>  
-                  <OutlinedInput  
-                    id="outlined-adornment-amount-standard"  
+                <FormControl fullWidth>
+                  <InputLabel htmlFor="outlined-adornment-amount-standard">
+                    Standard
+                  </InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-amount-standard"
                     value={standardPrice}
                     onChange={(e) => setStandardPrice(e.target.value)}
-                    startAdornment={  
-                      <InputAdornment position="start">$</InputAdornment>  
-                    }  
-                    label="Amount"  
-                  />  
-                </FormControl>  
+                    startAdornment={
+                      <InputAdornment position="start">$</InputAdornment>
+                    }
+                    label="Amount"
+                  />
+                </FormControl>
 
-                <FormControl fullWidth>  
-                  <InputLabel htmlFor="outlined-adornment-amount-premium">Premium</InputLabel>  
-                  <OutlinedInput  
-                    id="outlined-adornment-amount-premium"  
+                <FormControl fullWidth>
+                  <InputLabel htmlFor="outlined-adornment-amount-premium">
+                    Premium
+                  </InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-amount-premium"
                     value={premiumPrice}
                     onChange={(e) => setPremiumPrice(e.target.value)}
-                    startAdornment={  
-                      <InputAdornment position="start">$</InputAdornment>  
-                    }  
-                    label="Amount"  
-                  />  
-                </FormControl>  
+                    startAdornment={
+                      <InputAdornment position="start">$</InputAdornment>
+                    }
+                    label="Amount"
+                  />
+                </FormControl>
 
-                <FormControl fullWidth>  
-                  <InputLabel htmlFor="outlined-adornment-amount-vip">VIP</InputLabel>  
-                  <OutlinedInput  
-                    id="outlined-adornment-amount-vip"  
+                <FormControl fullWidth>
+                  <InputLabel htmlFor="outlined-adornment-amount-vip">
+                    VIP
+                  </InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-amount-vip"
                     value={vipPrice}
                     onChange={(e) => setVipPrice(e.target.value)}
-                    startAdornment={  
-                      <InputAdornment position="start">$</InputAdornment>  
-                    }  
-                    label="Amount"  
-                  />  
+                    startAdornment={
+                      <InputAdornment position="start">$</InputAdornment>
+                    }
+                    label="Amount"
+                  />
                 </FormControl>
 
                 <Button variant="contained" onClick={handleSubmit}>
                   Add ShowTime
                 </Button>
-              </Stack>  
-            </Grid>  
+              </Stack>
+            </Grid>
 
-            <Grid size={12}>  
-              <Box display="flex" justifyContent="center" alignItems="center">  
+            <Grid size={12}>
+              <Box display="flex" justifyContent="center" alignItems="center">
                 {/* <Theatre isadmin={true} seats={seats} />   */}
                 <SampleTheatre numberOfSeats={numberOfSeats} />
-              </Box>  
-            </Grid>  
-          </Grid>  
-        </Box>  
-      </DemoContainer>  
-    </LocalizationProvider>  
-  );  
-};  
+              </Box>
+            </Grid>
+          </Grid>
+        </Box>
+      </DemoContainer>
+    </LocalizationProvider>
+  );
+};
 
 export default ShowTime;
