@@ -197,6 +197,7 @@ export default function TheatrePage() {
                     variant="outlined"
                     color="primary"
                     onClick={() => updateTheatre(theatre._id)}
+                    disabled={theatre.showtimes && theatre.showtimes.length > 0}
                   >
                     Update
                   </Button>
