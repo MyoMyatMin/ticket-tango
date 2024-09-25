@@ -7,23 +7,23 @@ import Ticket from "@/models/Ticket";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-    try {
-        await dbConnect();  
-        const tickets = await Ticket.find({}).
-            populate({ model: Seat, path: 'seat', select: 'name type'}).
-            populate({ 
-                model: ShowTime,
-                path: 'showtime',
-                select: '-seats -price',
-                populate: [
-                    { model: Theatre, path: 'theatre', select: 'name'},
-                    { model: Movie, path: 'movie', select: 'title duration'}    
-                ],
-            });
+  try {
+    await dbConnect();
+    const tickets = await Ticket.find({})
+      .populate({ model: Seat, path: "seats", select: "name type" })
+      .populate({
+        model: ShowTime,
+        path: "showtime",
+        select: "-seats -price",
+        populate: [
+          { model: Theatre, path: "theatre", select: "name" },
+          { model: Movie, path: "movie", select: "title duration" },
+        ],
+      });
 
-        return NextResponse.json(tickets);
-    } catch (error) {
-        console.error('Error in GET /api/tickets:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
-    }
+    return NextResponse.json(tickets);
+  } catch (error) {
+    console.error("Error in GET /api/tickets:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
+}

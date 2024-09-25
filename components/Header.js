@@ -11,15 +11,16 @@ const Header = () => {
   return (
     <AppBar position="sticky" color="primary" elevation={3}>
       <Toolbar sx={{ paddingX: 3 }}>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1, marginTop: '5px' }}>
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ flexGrow: 1, marginTop: "5px" }}
+        >
           <Image src={Logo} alt="Ticket Tango" width={37} height={37} />
         </Typography>
         <Box sx={{ display: "flex", gap: 2 }}>
           <Button color="inherit" component={Link} href="/">
             Home
-          </Button>
-          <Button color="inherit" component={Link} href="/ticket">
-            Ticket
           </Button>
           <Button color="inherit" component={Link} href="/admin/showtime">
             Admin/ShowTime

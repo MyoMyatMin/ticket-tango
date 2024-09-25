@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useSearchParams, useRouter } from "next/navigation";
+import { Suspense } from "react";
 
 const TicketPage = () => {
   const searchParams = useSearchParams();
@@ -240,4 +241,12 @@ const TicketPage = () => {
   );
 };
 
-export default TicketPage;
+const TicketPageWrapper = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TicketPage />
+    </Suspense>
+  );
+};
+
+export default TicketPageWrapper;

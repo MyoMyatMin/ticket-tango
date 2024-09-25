@@ -7,29 +7,32 @@ import Ticket from "@/models/Ticket";
 import { NextResponse } from "next/server";
 
 export async function GET(request, { params }) {
-    try {
-        await dbConnect();  
-        const { id } = params;
+  try {
+    await dbConnect();
+    const { id } = params;
 
-        const ticket = await Ticket.findById(id).
-        populate({ model: Seat, path: 'seat', select: 'name type'}).
-        populate({ 
-            model: ShowTime,
-            path: 'showtime',
-            select: '-seats -price',
-            populate: [
-                { model: Theatre, path: 'theatre', select: 'name'},
-                { model: Movie, path: 'movie', select: 'title duration'}    
-            ],
-        });
+    const ticket = await Ticket.findById(id)
+      .populate({ model: Seat, path: "seats", select: "name type" })
+      .populate({
+        model: ShowTime,
+        path: "showtime",
+        select: "-seats -price",
+        populate: [
+          { model: Theatre, path: "theatre", select: "name" },
+          { model: Movie, path: "movie", select: "title duration" },
+        ],
+      });
 
-        if (!ticket) {
-            return NextResponse.json({ message: 'Ticket not found' }, { status: 404 });
-        }
-
-        return NextResponse.json(ticket);
-    } catch (error) {
-        console.error('Error in GET /api/tickets:', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+    if (!ticket) {
+      return NextResponse.json(
+        { message: "Ticket not found" },
+        { status: 404 }
+      );
     }
+
+    return NextResponse.json(ticket);
+  } catch (error) {
+    console.error("Error in GET /api/tickets:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
+}

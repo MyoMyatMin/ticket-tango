@@ -15,7 +15,7 @@ import {
   TableRow,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 
 const TheatrePage = () => {
   const [movie, setMovie] = useState(null);
@@ -269,4 +269,12 @@ const TheatrePage = () => {
   );
 };
 
-export default TheatrePage;
+const TheatrePageWithSuspense = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <TheatrePage />
+    </Suspense>
+  );
+};
+
+export default TheatrePageWithSuspense;
