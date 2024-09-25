@@ -13,20 +13,29 @@ import {
   Button,
   TextField,
   Stack,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const TicketPage = () => {
   const searchParams = useSearchParams();
-  const seatNumber = searchParams.get("seatNumber");
-  const selectedSeats = searchParams.get("selectedSeats");
-  const total = searchParams.get("total");
-  const showtimeid = searchParams.get("showtimeid");
+  const router = useRouter();
+  const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [user, setUser] = useState("");
   const [theatre, setTheatre] = useState("");
   const [movieUrl, setMovieUrl] = useState("");
   const [movieTitle, setMovieTitle] = useState("");
+  const [downloadUrl, setDownloadUrl] = useState("");
+  const [timeslot, setTimeslot] = useState("");
+  const [snackbarOpen, setSnackbarOpen] = useState(false); // State for Snackbar
+
+  const seatNumber = searchParams.get("seatNumber");
+  const selectedSeats = searchParams.get("selectedSeats");
+  const total = searchParams.get("total");
+  const showtimeid = searchParams.get("showtimeid");
+
   useEffect(() => {
     const fetchShowtime = async () => {
       try {
@@ -38,12 +47,15 @@ const TicketPage = () => {
         setTheatre(showtime.theatre.name);
         setMovieTitle(showtime.movie.title);
         setMovieUrl(showtime.movie.posterUrl);
+
+        const time = formatDateTime(showtime.startTime, showtime.date);
+        setTimeslot(time);
       } catch (error) {
         console.error("Failed to fetch movie data:", error);
       }
     };
     fetchShowtime();
-  }, []);
+  }, [showtimeid]);
 
   const handlePaySubmit = async () => {
     const payload = {
@@ -53,8 +65,6 @@ const TicketPage = () => {
       price: parseFloat(total),
       username: user,
     };
-
-    // console.log(payload)
 
     try {
       const response = await fetch(`/api/booking`, {
@@ -70,7 +80,35 @@ const TicketPage = () => {
       }
 
       const data = await response.json();
-      console.log("Booking successful:", data);
+
+      setPaymentSuccess(true);
+      setSnackbarOpen(true);
+
+      const ticketContent = `
+      Movie: ${movieTitle}
+      Theatre: ${theatre}
+      Seats: ${seatNumber}
+      Total: $${total}
+      User: ${user}
+      Showtime: ${timeslot}
+      `;
+
+      const blob = new Blob([ticketContent], { type: "text/plain" });
+      const downloadUrl = URL.createObjectURL(blob);
+      setDownloadUrl(downloadUrl);
+
+      setTimeout(() => {
+        const downloadLink = document.createElement("a");
+        downloadLink.href = downloadUrl;
+        downloadLink.download = "ticket.txt";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+      }, 2000);
+
+      setTimeout(() => {
+        router.back();
+      }, 2000);
     } catch (error) {
       console.error("Error:", error.message);
     }
@@ -79,6 +117,30 @@ const TicketPage = () => {
   const handleChange = (e) => {
     const { value } = e.target;
     setUser(value);
+  };
+
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+  };
+
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const formatTime = (time) => {
+    return new Date(time).toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+    });
+  };
+
+  const formatDateTime = (time, date) => {
+    return `${formatDate(date)} ${formatTime(time)}`;
   };
 
   return (
@@ -135,7 +197,7 @@ const TicketPage = () => {
                     <Typography variant="h6">Date Time:</Typography>
                   </TableCell>
                   <TableCell sx={{ border: "none" }}>
-                    <Typography variant="h6">12th Sept, 7:00 PM</Typography>
+                    <Typography variant="h6">{timeslot}</Typography>
                   </TableCell>
                 </TableRow>
 
@@ -156,8 +218,24 @@ const TicketPage = () => {
           <Button variant="contained" onClick={handlePaySubmit}>
             Pay
           </Button>
+
+          {paymentSuccess && (
+            <Typography variant="h6" color="success.main" sx={{ mt: 2 }}>
+              Payment successful! Your ticket will be downloaded shortly.
+            </Typography>
+          )}
         </Stack>
       </Grid>
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={10000}
+        onClose={handleSnackbarClose}
+      >
+        <Alert severity="success" sx={{ width: "100%" }}>
+          Payment successful! Your ticket is being prepared for download.
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };

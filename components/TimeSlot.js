@@ -18,7 +18,6 @@ export default function TimeSlot({
       day: "numeric",
     });
   };
-  // console.log(availableDates);
 
   const groupDatesWithTimeSlots = (dates) => {
     const grouped = {};
