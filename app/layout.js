@@ -5,7 +5,7 @@ import theme from "./theme";
 import { Shortcut } from "@mui/icons-material";
 
 export const metadata = {
-  title: "My Next.js App",
+  title: "TicketTango",
   description: "This is a Next.js app",
   icons:{
     icon:[
