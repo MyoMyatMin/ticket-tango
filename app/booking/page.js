@@ -148,29 +148,34 @@ const TheatrePage = () => {
 
   return (
     <Container maxWidth="lg">
-      <Box sx={{ py: 5 }}>
+      <Box
+        sx={{
+          py: 5,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <Typography
           variant="h3"
           component="h1"
           gutterBottom
-          textAlign="start"
-          ml={4}
+          textAlign={"center"}
           mb={4}
         >
           {movie.title}
         </Typography>
 
-        <Grid container spacing={2} sx={{ ml: 4, mb: 4 }}>
+        <Grid container spacing={10} sx={{ mb: 4, justifyContent: "center" }}>
           <Grid xs={12} md={4}>
             <MoviePoster imageUrl={movie.posterUrl} />
           </Grid>
 
-          <Grid xs={12} md={8} offset={0.4}>
+          <Grid xs={12} md={8}>
             <br />
             <Typography variant="h6" gutterBottom>
               Details
             </Typography>
-            <Table sx={{ width: "60%" }}>
+            <Table sx={{ width: "100%" }}>
               <TableBody>
                 <TableRow>
                   <TableCell
@@ -236,18 +241,6 @@ const TheatrePage = () => {
             </Table>
 
             <Divider sx={{ my: 2 }} />
-            <Typography variant="h6" gutterBottom>
-              Synopsis
-            </Typography>
-            <Typography
-              variant="body1"
-              gutterBottom
-              sx={{ maxWidth: "550px", color: "#ffff" }}
-            >
-              In a world where technology has advanced beyond imagination, a
-              group of elite heroes must band together to protect humanity from
-              an ancient threat.
-            </Typography>
           </Grid>
         </Grid>
 
