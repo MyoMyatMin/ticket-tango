@@ -1,4 +1,5 @@
 "use client";
+
 import MoviePoster from "@/components/MoviePoster";
 import React, { useEffect, useState } from "react";
 import {
@@ -15,12 +16,13 @@ import {
   Stack,
   Snackbar,
   Alert,
+  Container,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Suspense } from "react";
 
-const TicketPage = () => {
+export default function TicketPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [paymentSuccess, setPaymentSuccess] = useState(false);
@@ -30,7 +32,7 @@ const TicketPage = () => {
   const [movieTitle, setMovieTitle] = useState("");
   const [downloadUrl, setDownloadUrl] = useState("");
   const [timeslot, setTimeslot] = useState("");
-  const [snackbarOpen, setSnackbarOpen] = useState(false); // State for Snackbar
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const seatNumber = searchParams.get("seatNumber");
   const selectedSeats = searchParams.get("selectedSeats");
@@ -145,89 +147,84 @@ const TicketPage = () => {
   };
 
   return (
-    <Grid container spacing={4}>
-      <Grid sx={{ paddingLeft: 5, paddingRight: 4 }} size={4}>
-        <br />
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "flex-start",
-            ml: 4,
-            mb: 4,
-          }}
-        >
-          <MoviePoster imageUrl={movieUrl} />
-        </Box>
+    <Container maxWidth="lg">
+      <Grid
+        container
+        spacing={4}
+        marginTop={4}
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Grid xs={12} md={4}>
+          <Box sx={{ display: "flex", justifyContent: "center", mb: 4 }}>
+            <MoviePoster imageUrl={movieUrl} />
+          </Box>
+        </Grid>
+        <Grid xs={12} md={8}>
+          <Stack spacing={4}>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableBody>
+                  <TableRow>
+                    <TableCell sx={{ border: "none" }}>
+                      <Typography variant="h6">Title:</Typography>
+                    </TableCell>
+                    <TableCell sx={{ border: "none" }}>
+                      <Typography variant="h6">{movieTitle}</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ border: "none" }}>
+                      <Typography variant="h6">Theatre Name:</Typography>
+                    </TableCell>
+                    <TableCell sx={{ border: "none" }}>
+                      <Typography variant="h6">{theatre}</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ border: "none" }}>
+                      <Typography variant="h6">Selected Seat:</Typography>
+                    </TableCell>
+                    <TableCell sx={{ border: "none" }}>
+                      <Typography variant="h6">{seatNumber}</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ border: "none" }}>
+                      <Typography variant="h6">Date Time:</Typography>
+                    </TableCell>
+                    <TableCell sx={{ border: "none" }}>
+                      <Typography variant="h6">{timeslot}</Typography>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell sx={{ border: "none" }}>
+                      <Typography variant="h6">Total:</Typography>
+                    </TableCell>
+                    <TableCell sx={{ border: "none" }}>
+                      <Typography variant="h6">${total}</Typography>
+                    </TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TextField
+              label="User"
+              required
+              fullWidth
+              onChange={handleChange}
+            />
+            <Button variant="contained" onClick={handlePaySubmit}>
+              Pay
+            </Button>
+            {paymentSuccess && (
+              <Typography variant="h6" color="success.main" sx={{ mt: 2 }}>
+                Payment successful! Your ticket will be downloaded shortly.
+              </Typography>
+            )}
+          </Stack>
+        </Grid>
       </Grid>
-
-      <Grid sx={{ paddingLeft: 2 }} size={5}>
-        <br />
-        <Stack spacing={4}>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableBody>
-                <TableRow>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography variant="h6">Title:</Typography>
-                  </TableCell>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography variant="h6">{movieTitle}</Typography>
-                  </TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography variant="h6">Theatre Name:</Typography>
-                  </TableCell>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography variant="h6">{theatre}</Typography>
-                  </TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography variant="h6">Selected Seat:</Typography>
-                  </TableCell>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography variant="h6">{seatNumber}</Typography>
-                  </TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography variant="h6">Date Time:</Typography>
-                  </TableCell>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography variant="h6">{timeslot}</Typography>
-                  </TableCell>
-                </TableRow>
-
-                <TableRow>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography variant="h6">Total:</Typography>
-                  </TableCell>
-                  <TableCell sx={{ border: "none" }}>
-                    <Typography variant="h6">${total}</Typography>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-          </TableContainer>
-
-          <TextField label="User" required fullWidth onChange={handleChange} />
-
-          <Button variant="contained" onClick={handlePaySubmit}>
-            Pay
-          </Button>
-
-          {paymentSuccess && (
-            <Typography variant="h6" color="success.main" sx={{ mt: 2 }}>
-              Payment successful! Your ticket will be downloaded shortly.
-            </Typography>
-          )}
-        </Stack>
-      </Grid>
-
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={10000}
@@ -237,16 +234,14 @@ const TicketPage = () => {
           Payment successful! Your ticket is being prepared for download.
         </Alert>
       </Snackbar>
-    </Grid>
+    </Container>
   );
-};
+}
 
-const TicketPageWrapper = () => {
+function TicketPageWrapper() {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <TicketPage />
     </Suspense>
   );
-};
-
-export default TicketPageWrapper;
+}
