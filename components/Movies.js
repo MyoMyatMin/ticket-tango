@@ -56,7 +56,7 @@ const Movies = ({ movies }) => {
         {movies
         .filter(movie => movie.isOngoing == false)
         .map((movie, index) => (
-          <MovieCard key={index} {...movie} />
+          <MovieCard key={index} {...movie} isOngoing={movie.isOngoing} />
         ))}
       </Box>
     </Container>

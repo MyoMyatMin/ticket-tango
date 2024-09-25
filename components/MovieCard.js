@@ -8,20 +8,22 @@ import {
   Button,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
+
 const MovieCard = ({
   title,
   genre,
-  cast,
   duration,
-  image,
   description,
   _id,
   posterUrl,
+  isOngoing,
 }) => {
   const router = useRouter();
-  const handelSubmit = () => {
+  
+  const handleSubmit = () => {
     router.push(`/booking?movieid=${encodeURIComponent(_id)}`);
   };
+
   return (
     <Card
       sx={{
@@ -64,14 +66,14 @@ const MovieCard = ({
         <Typography
           variant="body2"
           color="text.secondary"
-          sx={{ marginBottom: 0.5, color: "text.secondary" }}
+          sx={{ marginBottom: 0.5 }}
         >
           <strong>Genre:</strong> {genre}
         </Typography>
         <Typography
           variant="body2"
           color="text.secondary"
-          sx={{ marginBottom: 0.5, color: "text.secondary" }}
+          sx={{ marginBottom: 0.5 }}
         >
           <strong>Duration:</strong> {duration}
         </Typography>
@@ -83,26 +85,35 @@ const MovieCard = ({
             overflow: "hidden",
             textOverflow: "ellipsis",
             whiteSpace: "nowrap",
-            color: "text.secondary",
           }}
         >
           {description}
         </Typography>
       </CardContent>
+
       <CardActions sx={{ padding: 2, paddingTop: 0 }}>
-        <Button
-          size="small"
-          variant="contained"
-          onClick={handelSubmit}
-          sx={{
-            backgroundColor: "primary.main",
-            color: "#fff",
-            textTransform: "none",
-            "&:hover": { backgroundColor: "primary.main" },
-          }}
-        >
-          BUY TICKETS
-        </Button>
+        {isOngoing ? (
+          <Button
+            size="small"
+            variant="contained"
+            onClick={handleSubmit}
+            sx={{
+              backgroundColor: "primary.main",
+              color: "#fff",
+              textTransform: "none",
+              "&:hover": { backgroundColor: "primary.main" },
+            }}
+          >
+            BUY TICKETS
+          </Button>
+        ) : (
+          <Typography
+            variant="body2"
+            sx={{ color: "text.secondary", fontStyle: "italic" }}
+          >
+            Coming ...
+          </Typography>
+        )}
       </CardActions>
     </Card>
   );
