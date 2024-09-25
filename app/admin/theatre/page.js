@@ -28,8 +28,8 @@ export default function TheatrePage() {
     numberOfSeats: {
       standard: 0,
       premium: 0,
-      vip: 0
-    }
+      vip: 0,
+    },
   });
   const [loading, setLoading] = useState(false);
 
@@ -57,18 +57,18 @@ export default function TheatrePage() {
     // console.log(name, value)
 
     setSelectedTheatre((prev) => {
-      if (name === 'name') {
-        return { ...prev, [name]: value }
+      if (name === "name") {
+        return { ...prev, [name]: value };
       } else {
         return {
           ...prev,
           numberOfSeats: {
             ...prev.numberOfSeats,
-            [name]: parseInt(value) || 0
-          }
-        }
+            [name]: parseInt(value) || 0,
+          },
+        };
       }
-    })
+    });
   };
 
   const handleSubmit = async () => {
@@ -98,7 +98,7 @@ export default function TheatrePage() {
             theatre._id === updatedTheatre._id
               ? {
                   ...theatre,
-                  ...updatedTheatre
+                  ...updatedTheatre,
                 }
               : theatre
           )
@@ -149,7 +149,11 @@ export default function TheatrePage() {
         throw new Error(`Failed to delete theatre: ${response.statusText}`);
       }
 
-      setTheatres((prev) => prev.filter((theatre) => theatre._id !== id));
+      setTheatres((prev) => {
+        const updatedTheatres = prev.filter((theatre) => theatre._id !== id);
+        console.log(updatedTheatres);
+        return updatedTheatres;
+      });
     } catch (error) {
       console.error(error);
     } finally {
@@ -164,10 +168,10 @@ export default function TheatrePage() {
       numberOfSeats: {
         standard: 0,
         premium: 0,
-        vip: 0
-      }
-    })
-  }
+        vip: 0,
+      },
+    });
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -198,6 +202,18 @@ export default function TheatrePage() {
                     color="primary"
                     onClick={() => updateTheatre(theatre._id)}
                     disabled={theatre.showtimes && theatre.showtimes.length > 0}
+                    sx={{
+                      backgroundColor:
+                        theatre.showtimes && theatre.showtimes.length > 0
+                          ? "primary.main"
+                          : undefined,
+                      color: "white",
+                      "&.Mui-disabled": {
+                        backgroundColor: "primary.main",
+                        color: "white",
+                        opacity: 0.8,
+                      },
+                    }}
                   >
                     Update
                   </Button>

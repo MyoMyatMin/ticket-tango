@@ -37,7 +37,7 @@ export default function Component() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/movies");
+        const response = await fetch("http://localhost:3000/api/booking");
         const data = await response.json();
         setMovies(data);
       } catch (error) {
@@ -109,9 +109,17 @@ export default function Component() {
 
         if (response.ok) {
           if (newMovie.id) {
+            let newResult = result;
+            let findShowtimes = movies.find(
+              (movie) => movie._id === newMovie.id
+            );
+            if (findShowtimes) {
+              newResult.showtimes = findShowtimes.showtimes;
+            }
+
             setMovies((prevMovies) =>
               prevMovies.map((movie) =>
-                movie._id === result._id ? result : movie
+                movie._id === newResult._id ? newResult : movie
               )
             );
           } else {
@@ -128,13 +136,24 @@ export default function Component() {
       }
     }
   };
-
   const deleteMovie = async (id) => {
     try {
-      await fetch(`/api/movies/${id}`, {
+      const response = await fetch(`/api/movies/${id}`, {
         method: "DELETE",
       });
-      setMovies(movies.filter((movie) => movie._id !== id));
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log(result.message);
+        setMovies((prevMovies) => {
+          const updatedMovies = prevMovies.filter((movie) => movie._id !== id);
+          console.log(updatedMovies);
+          return updatedMovies;
+        });
+      } else {
+        const errorResult = await response.json();
+        console.error("Failed to delete movie:", errorResult.error);
+      }
     } catch (error) {
       console.error("Error deleting movie:", error);
     }
@@ -282,6 +301,19 @@ export default function Component() {
                         variant="outlined"
                         color="secondary"
                         onClick={() => deleteMovie(movie._id)}
+                        disabled={movie.showtimes && movie.showtimes.length > 0}
+                        sx={{
+                          backgroundColor:
+                            movie.showtimes && movie.showtimes.length > 0
+                              ? "secondary.main"
+                              : undefined,
+                          color: "white",
+                          "&.Mui-disabled": {
+                            backgroundColor: "secondary.main",
+                            color: "white",
+                            opacity: 0.8,
+                          },
+                        }}
                       >
                         Delete
                       </Button>

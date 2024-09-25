@@ -28,7 +28,7 @@ export async function GET(request, { params }) {
     //   showtimes,
     // });
 
-    return NextResponse.json(movie)
+    return NextResponse.json(movie);
   } catch (error) {
     console.error("Error in GET /api/movies/[id]:", error);
     return NextResponse.json(
@@ -43,12 +43,14 @@ export async function PUT(request, { params }) {
     await dbConnect();
     const body = await request.json();
 
-    if (body.posterUrl) {
-      const existingMovie = await Movie.findById(params.id);
-      if (!existingMovie) {
-        return NextResponse.json({ error: "Movie not found" }, { status: 404 });
-      }
+    const existingMovie = await Movie.findById(params.id);
+    if (!existingMovie) {
+      return NextResponse.json({ error: "Movie not found" }, { status: 404 });
+    }
 
+    if (!body.posterUrl) {
+      body.posterUrl = existingMovie.posterUrl;
+    } else {
       if (existingMovie.posterUrl) {
         const publicId = existingMovie.posterUrl
           .match(/[^/]*$/)[0]
@@ -74,6 +76,32 @@ export async function PUT(request, { params }) {
     return NextResponse.json(updatedMovie);
   } catch (error) {
     console.error("Error in PUT /api/movies/[id]:", error);
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request, { params }) {
+  try {
+    await dbConnect();
+    const existingMovie = await Movie.findByIdAndDelete(params.id);
+
+    if (!existingMovie) {
+      return NextResponse.json({ error: "Movie not found" }, { status: 404 });
+    }
+
+    if (existingMovie.posterUrl) {
+      const publicId = existingMovie.posterUrl.match(/[^/]*$/)[0].split(".")[0];
+      await cloudinary.uploader.destroy(publicId);
+    }
+
+    return NextResponse.json({
+      message: "Movie deleted successfully",
+    });
+  } catch (error) {
+    console.error("Error in DELETE /api/movies/[id]:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }
