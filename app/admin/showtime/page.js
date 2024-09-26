@@ -18,8 +18,11 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import SampleTheatre from "@/components/SampleTheatre";
 import dayjs from "dayjs";
 import { set } from "mongoose";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 const ShowTime = () => {
+  useAuthGuard();
+
   const [numberOfSeats, setNumberOfSeats] = useState();
   const [movie, setMovie] = useState("");
   const [theatre, setTheatre] = useState("");

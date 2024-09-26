@@ -20,8 +20,11 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import Grid from "@mui/material/Grid2";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 export default function Component() {
+  useAuthGuard()
+
   const [movies, setMovies] = useState([]);
   const [newMovie, setNewMovie] = useState({
     id: null,

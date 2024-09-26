@@ -19,8 +19,11 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import SampleTheatre from "@/components/SampleTheatre";
+import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 export default function TheatrePage() {
+  useAuthGuard();
+
   const [theatres, setTheatres] = useState([]);
   const [selectedTheatre, setSelectedTheatre] = useState({
     _id: 0,

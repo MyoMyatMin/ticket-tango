@@ -1,3 +1,4 @@
+"use client";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -6,8 +7,27 @@ import Logo from "@/public/ticket-tango.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { Box } from "@mui/material";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
-const Header = () => {
+export default function Header() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    localStorage.removeItem("authenticated");
+    setIsAuthenticated(false); 
+    router.push("/");
+  };
+
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem("authenticated") === "true";
+  });;
+
+  useEffect(() => {
+    const authenticated = localStorage.getItem("authenticated") === "true";
+    setIsAuthenticated(authenticated);
+  }, []);
+
   return (
     <AppBar position="sticky" color="primary" elevation={3}>
       <Toolbar sx={{ paddingX: 3 }}>
@@ -22,19 +42,28 @@ const Header = () => {
           <Button color="inherit" component={Link} href="/">
             Home
           </Button>
-          <Button color="inherit" component={Link} href="/admin/showtime">
-            Admin/ShowTime
+          <Button color="inherit" component={Link} href="/admin">
+            Admin
           </Button>
-          <Button color="inherit" component={Link} href="/admin/movie">
-            Admin/Movie
-          </Button>
-          <Button color="inherit" component={Link} href="/admin/theatre">
-            Admin/Theatre
-          </Button>
+
+          {isAuthenticated && (
+            <>
+              <Button color="inherit" component={Link} href="/admin/showtime">
+                Admin/ShowTime
+              </Button>
+              <Button color="inherit" component={Link} href="/admin/movie">
+                Admin/Movie
+              </Button>
+              <Button color="inherit" component={Link} href="/admin/theatre">
+                Admin/Theatre
+              </Button>
+              <Button color="inherit" onClick={handleLogout}>
+                Logout
+              </Button>
+            </>
+          )}
         </Box>
       </Toolbar>
     </AppBar>
   );
 };
-
-export default Header;
