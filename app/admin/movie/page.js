@@ -23,7 +23,7 @@ import Grid from "@mui/material/Grid2";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 export default function Component() {
-  useAuthGuard()
+  useAuthGuard();
 
   const [movies, setMovies] = useState([]);
   const [newMovie, setNewMovie] = useState({
@@ -40,7 +40,7 @@ export default function Component() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/booking");
+        const response = await fetch("/api/booking");
         const data = await response.json();
         setMovies(data);
       } catch (error) {
