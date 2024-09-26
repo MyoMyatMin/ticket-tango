@@ -20,7 +20,10 @@ export default function Home() {
     const data = await res.json();
     if (data.success) {
       setError("");
-      localStorage.setItem("authenticated", "true");
+      // localStorage.setItem("authenticated", "true");
+      if (typeof window !== 'undefined') {
+        localStorage.setItem("authenticated", "true");
+      }
       router.push("/admin/showtime");
     } else {
       setError("Invalid passcode");

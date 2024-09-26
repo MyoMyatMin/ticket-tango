@@ -14,14 +14,14 @@ export default function Header() {
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem("authenticated");
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("authenticated");
+    }
     setIsAuthenticated(false); 
     router.push("/");
   };
 
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem("authenticated") === "true";
-  });;
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     const authenticated = localStorage.getItem("authenticated") === "true";
