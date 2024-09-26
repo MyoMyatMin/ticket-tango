@@ -2,7 +2,6 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import Header from "../components/Header";
 import { CssBaseline, ThemeProvider, Box } from "@mui/material";
 import theme from "./theme";
-import { Shortcut } from "@mui/icons-material";
 
 export const metadata = {
   title: "TicketTango",
