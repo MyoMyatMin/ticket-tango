@@ -147,10 +147,8 @@ export default function Component() {
 
       if (response.ok) {
         const result = await response.json();
-        console.log(result.message);
         setMovies((prevMovies) => {
           const updatedMovies = prevMovies.filter((movie) => movie._id !== id);
-          console.log(updatedMovies);
           return updatedMovies;
         });
       } else {
@@ -292,11 +290,14 @@ export default function Component() {
                     <TableCell>{movie.genre}</TableCell>
                     <TableCell>{movie.duration}</TableCell>
                     <TableCell>{movie.cast}</TableCell>
-                    <TableCell>
+                    <TableCell sx={{ width: '300px' }}>
                       <Button
                         variant="outlined"
                         color="primary"
                         onClick={() => updateMovie(movie._id)}
+                        sx={{
+                          marginRight: 1,
+                        }}
                       >
                         Update
                       </Button>

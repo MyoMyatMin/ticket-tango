@@ -154,7 +154,6 @@ export default function TheatrePage() {
 
       setTheatres((prev) => {
         const updatedTheatres = prev.filter((theatre) => theatre._id !== id);
-        console.log(updatedTheatres);
         return updatedTheatres;
       });
     } catch (error) {
@@ -210,6 +209,7 @@ export default function TheatrePage() {
                         theatre.showtimes && theatre.showtimes.length > 0
                           ? "primary.main"
                           : undefined,
+                      marginRight: 1,
                       color: "white",
                       "&.Mui-disabled": {
                         backgroundColor: "primary.main",
