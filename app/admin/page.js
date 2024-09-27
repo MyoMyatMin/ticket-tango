@@ -1,12 +1,14 @@
 "use client";
 import { Box, TextField, Button } from "@mui/material";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AuthContext } from "../contexts/auth-context";
 
 export default function Home() {
-    const [passcode, setPasscode] = useState("");
-    const [error, setError] = useState("");
-    const router = useRouter();
+  const [passcode, setPasscode] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
+  const { setIsAuthenticated } = useContext(AuthContext);
 
   const handleSubmit = async () => {
     const res = await fetch("/api/validate-passcode", {
@@ -20,10 +22,10 @@ export default function Home() {
     const data = await res.json();
     if (data.success) {
       setError("");
-      // localStorage.setItem("authenticated", "true");
       if (typeof window !== 'undefined') {
         localStorage.setItem("authenticated", "true");
       }
+      setIsAuthenticated(true);
       router.push("/admin/showtime");
     } else {
       setError("Invalid passcode");

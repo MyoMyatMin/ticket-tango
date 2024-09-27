@@ -7,26 +7,11 @@ import Logo from "@/public/ticket-tango.svg";
 import Image from "next/image";
 import Link from "next/link";
 import { Box } from "@mui/material";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useContext } from "react";
+import { AuthContext } from "@/app/contexts/auth-context";
 
 export default function Header() {
-  const router = useRouter();
-
-  const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem("authenticated");
-    }
-    setIsAuthenticated(false); 
-    router.push("/");
-  };
-
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const authenticated = localStorage.getItem("authenticated") === "true";
-    setIsAuthenticated(authenticated);
-  }, []);
+  const { isAuthenticated, handleLogout } = useContext(AuthContext);
 
   return (
     <AppBar position="sticky" color="primary" elevation={3}>
@@ -42,20 +27,22 @@ export default function Header() {
           <Button color="inherit" component={Link} href="/">
             Home
           </Button>
-          <Button color="inherit" component={Link} href="/admin">
-            Admin
-          </Button>
+          {!isAuthenticated && (
+            <Button color="inherit" component={Link} href="/admin">
+              Admin
+            </Button>
+          )}
 
           {isAuthenticated && (
             <>
               <Button color="inherit" component={Link} href="/admin/showtime">
-                Admin/ShowTime
+                ShowTime
               </Button>
               <Button color="inherit" component={Link} href="/admin/movie">
-                Admin/Movie
+                Movie
               </Button>
               <Button color="inherit" component={Link} href="/admin/theatre">
-                Admin/Theatre
+                Theatre
               </Button>
               <Button color="inherit" onClick={handleLogout}>
                 Logout
@@ -66,4 +53,4 @@ export default function Header() {
       </Toolbar>
     </AppBar>
   );
-};
+}
