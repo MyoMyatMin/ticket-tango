@@ -5,7 +5,7 @@ import { useState, useContext } from "react";
 import { AuthContext } from "../contexts/auth-context";
 
 export default function Home() {
-  const [passcode, setPasscode] = useState("");
+  const [passcode, setPasscode] = useState("passcode");
   const [error, setError] = useState("");
   const router = useRouter();
   const { setIsAuthenticated } = useContext(AuthContext);
