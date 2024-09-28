@@ -1,275 +1,138 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import Grid from "@mui/material/Grid2";
-import { Button, InputAdornment, OutlinedInput, Stack } from "@mui/material";
+import React, { useState, useEffect } from "react";
 import {
-  DatePicker,
-  LocalizationProvider,
-  TimePicker,
-} from "@mui/x-date-pickers";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import SampleTheatre from "@/components/SampleTheatre";
-import dayjs from "dayjs";
-import { set } from "mongoose";
+  Box,
+  Button,
+  Stack,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
+import Link from "next/link";
 
-const ShowTime = () => {
+export default function Component() {
   useAuthGuard();
 
-  const [numberOfSeats, setNumberOfSeats] = useState();
-  const [movie, setMovie] = useState("");
-  const [theatre, setTheatre] = useState("");
-  const [movies, setMovies] = useState([]);
-  const [theatres, setTheatres] = useState([]);
-  const [date, setDate] = useState(null);
-  const [startTime, setStartTime] = useState(null);
-  const [endTime, setEndTime] = useState(null);
-  const [standardPrice, setStandardPrice] = useState("");
-  const [premiumPrice, setPremiumPrice] = useState("");
-  const [vipPrice, setVipPrice] = useState("");
+  const [showtimes, setShowtimes] = useState([]);
 
   useEffect(() => {
-    // Fetch movies from /api/movies
-    const fetchMovies = async () => {
-      const res = await fetch("/api/movies");
-      const data = await res.json();
-      setMovies(data);
+    const fetchShowtimes = async () => {
+      try {
+        const response = await fetch("/api/showtimes");
+        const data = await response.json();
+        console.log(data)
+        setShowtimes(data);
+      } catch (error) {
+        console.error("Error fetching movies:", error);
+      }
     };
 
-    // Fetch theatres from /api/theatre
-    const fetchTheatres = async () => {
-      const res = await fetch("/api/theatres");
-      const data = await res.json();
-      setTheatres(data);
-    };
-
-    fetchMovies();
-    fetchTheatres();
+    fetchShowtimes();
   }, []);
 
-  const handleMovie = (event) => {
-    setMovie(event.target.value);
-  };
-
-  const handleTheatre = (event) => {
-    setTheatre(event.target.value);
-    setNumberOfSeats(
-      theatres.find((theatre) => theatre._id == event.target.value)
-        .numberOfSeats
-    );
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    const showtimeData = {
-      movie,
-      theatre,
-      startTime: startTime,
-      endTime: endTime,
-      date: date,
-      price: {
-        standard: parseFloat(standardPrice),
-        premium: parseFloat(premiumPrice),
-        vip: parseFloat(vipPrice),
-      },
-    };
-
+  const deleteShowtime = async (id) => {
     try {
-      const res = await fetch("/api/showtimes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(showtimeData),
+      const response = await fetch(`/api/showtimes/${id}`, {
+        method: "DELETE",
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to add showtime");
+      if (response.ok) {
+        const result = await response.json();
+        setShowtimes((prevShowtimes) => {
+          const updatedShowtime = prevShowtimes.filter((showtime) => showtime._id !== id);
+          return updatedShowtime;
+        });
+      } else {
+        const errorResult = await response.json();
+        console.error("Failed to delete showtimes:", errorResult.error);
       }
-
-      await res.json();
-
-      setMovie("");
-      setTheatre("");
-      setDate(null);
-      setStartTime(null);
-      setEndTime(null);
-      setStandardPrice("");
-      setPremiumPrice("");
-      setVipPrice("");
-      setNumberOfSeats(null);
     } catch (error) {
-      console.error("Error adding showtime:", error);
+      console.error("Error deleting showtimes:", error);
     }
   };
 
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+  
+  const formatTime = (timeString) => {
+    const time = new Date(timeString);
+    return time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DemoContainer components={["TimePicker", "DatePicker"]}>
-        <Box sx={{ flexGrow: 1 }}>
-          <Grid container spacing={2}>
-            <Grid size={6}>
-              <Stack spacing={2}>
-                <FormControl fullWidth required>
-                  <InputLabel id="movie-select-label">Movie</InputLabel>
-                  <Select
-                    labelId="movie-select-label"
-                    id="movie-select"
-                    value={movie}
-                    label="Movie"
-                    onChange={handleMovie}
-                    sx={{
-                      "& .MuiSelect-icon": {
-                        color: "#FF6B6B",
-                      },
-                    }}
-                  >
-                    {movies.map((movie) => (
-                      <MenuItem key={movie._id} value={movie._id}>
-                        {movie.title}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <FormControl fullWidth>
-                  <DatePicker
-                    label="Date"
-                    value={date}
-                    onChange={(newValue) => setDate(dayjs(newValue))}
-                    sx={{
-                      "& .MuiSvgIcon-root": {
-                        color: "#FF6B6B",
-                        fontSize: "1.1rem",
-                      },
-                    }}
-                  />
-                </FormControl>
-
-                <FormControl fullWidth>
-                  <TimePicker
-                    label="Start Time"
-                    value={startTime}
-                    onChange={(newValue) => setStartTime(dayjs(newValue))}
-                    sx={{
-                      "& .MuiSvgIcon-root": {
-                        color: "#FF6B6B",
-                        fontSize: "1.1rem",
-                      },
-                    }}
-                  />
-                </FormControl>
-
-                <FormControl fullWidth>
-                  <TimePicker
-                    label="End Time"
-                    value={endTime}
-                    onChange={(newValue) => setEndTime(dayjs(newValue))}
-                    sx={{
-                      "& .MuiSvgIcon-root": {
-                        color: "#FF6B6B",
-                        fontSize: "1.1rem",
-                      },
-                    }}
-                  />
-                </FormControl>
-              </Stack>
-            </Grid>
-
-            <Grid size={6}>
-              <Stack spacing={2}>
-                <FormControl fullWidth required>
-                  <InputLabel id="theatre-select-label">Theatre</InputLabel>
-                  <Select
-                    labelId="theatre-select-label"
-                    id="theatre-select"
-                    value={theatre}
-                    label="Theatre"
-                    onChange={handleTheatre}
-                    sx={{
-                      "& .MuiSelect-icon": {
-                        color: "#FF6B6B",
-                      },
-                    }}
-                  >
-                    {theatres.map((theatre) => (
-                      <MenuItem key={theatre._id} value={theatre._id}>
-                        {theatre.name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-
-                <FormControl fullWidth>
-                  <InputLabel htmlFor="outlined-adornment-amount-standard">
-                    Standard
-                  </InputLabel>
-                  <OutlinedInput
-                    id="outlined-adornment-amount-standard"
-                    value={standardPrice}
-                    onChange={(e) => setStandardPrice(e.target.value)}
-                    startAdornment={
-                      <InputAdornment position="start">$</InputAdornment>
-                    }
-                    label="Amount"
-                  />
-                </FormControl>
-
-                <FormControl fullWidth>
-                  <InputLabel htmlFor="outlined-adornment-amount-premium">
-                    Premium
-                  </InputLabel>
-                  <OutlinedInput
-                    id="outlined-adornment-amount-premium"
-                    value={premiumPrice}
-                    onChange={(e) => setPremiumPrice(e.target.value)}
-                    startAdornment={
-                      <InputAdornment position="start">$</InputAdornment>
-                    }
-                    label="Amount"
-                  />
-                </FormControl>
-
-                <FormControl fullWidth>
-                  <InputLabel htmlFor="outlined-adornment-amount-vip">
-                    VIP
-                  </InputLabel>
-                  <OutlinedInput
-                    id="outlined-adornment-amount-vip"
-                    value={vipPrice}
-                    onChange={(e) => setVipPrice(e.target.value)}
-                    startAdornment={
-                      <InputAdornment position="start">$</InputAdornment>
-                    }
-                    label="Amount"
-                  />
-                </FormControl>
-
-                <Button variant="contained" onClick={handleSubmit}>
-                  Add ShowTime
-                </Button>
-              </Stack>
-            </Grid>
-
-            <Grid size={12}>
-              <Box display="flex" justifyContent="center" alignItems="center">
-                {/* <Theatre isadmin={true} seats={seats} />   */}
-                <SampleTheatre numberOfSeats={numberOfSeats} />
-              </Box>
-            </Grid>
-          </Grid>
-        </Box>
-      </DemoContainer>
-    </LocalizationProvider>
+    <Box>
+      <Grid>
+        <Stack spacing={2} direction={"row"} sx={{ marginBottom: 3}}>
+          <Typography variant="h6" gutterBottom>
+            Showtime List
+          </Typography>
+          <Button
+            component={Link}
+            href="/admin/showtime/create"
+            variant="outlined"
+            color="success"
+            >
+            Create Showtime
+          </Button>
+        </Stack>
+        <Grid>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Date</TableCell>
+                  <TableCell>StartTime</TableCell>
+                  <TableCell>EndTime</TableCell>
+                  <TableCell>Theatre</TableCell>
+                  <TableCell>Movie Name</TableCell>
+                  <TableCell>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {showtimes.map((showtime) => (
+                  <TableRow key={showtime._id}>
+                    <TableCell>{formatDate(showtime.date)}</TableCell>
+                    <TableCell>{formatTime(showtime.startTime)}</TableCell>
+                    <TableCell>{formatTime(showtime.endTime)}</TableCell>
+                    <TableCell>{showtime.theatre?.name}</TableCell>
+                    <TableCell>{showtime.movie?.title}</TableCell>
+                    <TableCell>
+                      <Stack spacing={1} direction={"row"} sx={{
+                      }}>
+                        {/* <Button
+                          variant="outlined"
+                          color="primary"
+                          // onClick={() => updateShowtime(showtime._id)}
+                        >
+                          Update
+                        </Button> */}
+                        <Button
+                          variant="outlined"
+                          color="secondary"
+                          onClick={() => deleteShowtime(showtime._id)}
+                        >
+                          Delete
+                        </Button>
+                      </Stack>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+      </Grid>
+    </Box>
   );
-};
-
-export default ShowTime;
+}
