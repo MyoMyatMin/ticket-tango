@@ -17,11 +17,12 @@ import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import SampleTheatre from "@/components/SampleTheatre";
 import dayjs from "dayjs";
-import { set } from "mongoose";
+import { useRouter } from "next/navigation";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 
 const ShowTime = () => {
   useAuthGuard();
+  const router = useRouter();
 
   const [numberOfSeats, setNumberOfSeats] = useState();
   const [movie, setMovie] = useState("");
@@ -34,24 +35,46 @@ const ShowTime = () => {
   const [standardPrice, setStandardPrice] = useState("");
   const [premiumPrice, setPremiumPrice] = useState("");
   const [vipPrice, setVipPrice] = useState("");
+  const [showtimeId, setShowtimeId] = useState(null); // Store the showtime ID
 
   useEffect(() => {
-    // Fetch movies from /api/movies
-    const fetchMovies = async () => {
-      const res = await fetch("/api/movies");
-      const data = await res.json();
-      setMovies(data);
+    const fetchData = async () => {
+      try {
+        const resMovies = await fetch("/api/movies");
+        const moviesData = await resMovies.json();
+        setMovies(moviesData);
+  
+        const resTheatres = await fetch("/api/theatres");
+        const theatresData = await resTheatres.json();
+        setTheatres(theatresData);
+  
+        const { searchParams } = new URL(window.location);
+        const id = searchParams.get("showtimeId"); // Change to "showtimeId" as per your query param
+        if (id) {
+          setShowtimeId(id); // Set the showtime ID
+          // Fetch the showtime details
+          const showtimeRes = await fetch(`/api/showtimes/${id}`);
+          const showtimeData = await showtimeRes.json();
+          if (showtimeRes.ok) {
+            // Populate form fields with the fetched data
+            setMovie(showtimeData.movie._id);
+            setTheatre(showtimeData.theatre._id);
+            setDate(dayjs(showtimeData.date));
+            setStartTime(dayjs(showtimeData.startTime));
+            setEndTime(dayjs(showtimeData.endTime));
+            setStandardPrice(showtimeData.price.standard);
+            setPremiumPrice(showtimeData.price.premium);
+            setVipPrice(showtimeData.price.vip);
+          } else {
+            console.error("Failed to fetch showtime data");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
-
-    // Fetch theatres from /api/theatre
-    const fetchTheatres = async () => {
-      const res = await fetch("/api/theatres");
-      const data = await res.json();
-      setTheatres(data);
-    };
-
-    fetchMovies();
-    fetchTheatres();
+  
+    fetchData();
   }, []);
 
   const handleMovie = (event) => {
@@ -72,9 +95,9 @@ const ShowTime = () => {
     const showtimeData = {
       movie,
       theatre,
-      startTime: startTime,
-      endTime: endTime,
-      date: date,
+      startTime,
+      endTime,
+      date,
       price: {
         standard: parseFloat(standardPrice),
         premium: parseFloat(premiumPrice),
@@ -83,20 +106,29 @@ const ShowTime = () => {
     };
 
     try {
-      const res = await fetch("/api/showtimes", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(showtimeData),
-      });
+      const res = showtimeId
+        ? await fetch(`/api/showtimes/${showtimeId}`, {
+            method: "PUT", // Use PUT for updates
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(showtimeData),
+          })
+        : await fetch("/api/showtimes", {
+            method: "POST", // Use POST for new showtime
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(showtimeData),
+          });
 
       if (!res.ok) {
-        throw new Error("Failed to add showtime");
+        throw new Error(showtimeId ? "Failed to update showtime" : "Failed to add showtime");
       }
 
       await res.json();
 
+      // Reset the form
       setMovie("");
       setTheatre("");
       setDate(null);
@@ -106,8 +138,11 @@ const ShowTime = () => {
       setPremiumPrice("");
       setVipPrice("");
       setNumberOfSeats(null);
+
+      // Redirect after successful creation/update
+      router.push("/admin/showtime"); // Redirect to showtimes list or appropriate page
     } catch (error) {
-      console.error("Error adding showtime:", error);
+      console.error("Error:", error);
     }
   };
 
@@ -254,14 +289,13 @@ const ShowTime = () => {
                 </FormControl>
 
                 <Button variant="contained" onClick={handleSubmit}>
-                  Add ShowTime
+                  {showtimeId ? "Update ShowTime" : "Add ShowTime"}
                 </Button>
               </Stack>
             </Grid>
 
             <Grid size={12}>
               <Box display="flex" justifyContent="center" alignItems="center">
-                {/* <Theatre isadmin={true} seats={seats} />   */}
                 <SampleTheatre numberOfSeats={numberOfSeats} />
               </Box>
             </Grid>

@@ -29,6 +29,33 @@ export async function GET(request, { params }) {
   }
 }
 
+export async function PUT(request, { params }) {
+  try {
+    await dbConnect();
+    const { id } = params;
+
+    const showtimeData = await request.json();
+
+    const updatedShowtime = await ShowTime.findByIdAndUpdate(id, showtimeData, {
+      new: true,
+      runValidators: true, // Validate the update against the schema
+    }).populate(["seats", "theatre", "movie"]);
+
+    if (!updatedShowtime) {
+      return NextResponse.json(
+        { message: "ShowTime not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(updatedShowtime);
+  } catch (error) {
+    console.error("Error in PUT /api/showtimes/[id]:", error);
+    return NextResponse.json({ message: error.message }, { status: 400 });
+  }
+}
+
+
 export async function DELETE(request, { params }) {
   const session = await mongoose.startSession();
   session.startTransaction();

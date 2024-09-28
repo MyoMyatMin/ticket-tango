@@ -17,11 +17,13 @@ import {
 import Grid from "@mui/material/Grid2";
 import { useAuthGuard } from "@/hooks/useAuthGuard";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Component() {
   useAuthGuard();
 
   const [showtimes, setShowtimes] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchShowtimes = async () => {
@@ -58,6 +60,10 @@ export default function Component() {
       console.error("Error deleting showtimes:", error);
     }
   };
+
+  const updateShowtime = (showtime_id) => {
+    router.push(`/admin/showtime/create?showtimeId=${showtime_id}`)
+  }
 
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -110,13 +116,13 @@ export default function Component() {
                     <TableCell>
                       <Stack spacing={1} direction={"row"} sx={{
                       }}>
-                        {/* <Button
+                        <Button
                           variant="outlined"
                           color="primary"
-                          // onClick={() => updateShowtime(showtime._id)}
+                          onClick={() => updateShowtime(showtime._id)}
                         >
                           Update
-                        </Button> */}
+                        </Button>
                         <Button
                           variant="outlined"
                           color="secondary"
