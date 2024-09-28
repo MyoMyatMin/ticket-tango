@@ -199,34 +199,34 @@ export default function TheatrePage() {
                 <TableCell>{theatre.numberOfSeats.premium}</TableCell>
                 <TableCell>{theatre.numberOfSeats.vip}</TableCell>
                 <TableCell>
-                  <Button
-                    variant="outlined"
-                    color="primary"
-                    onClick={() => updateTheatre(theatre._id)}
-                    disabled={theatre.showtimes && theatre.showtimes.length > 0}
+                  <Stack spacing={1} direction={"row"} sx={{
+                    display: theatre.showtimes && theatre.showtimes.length > 0 ? "none" : "inline-flex",
+                  }}>
+                    <Button
+                      variant="outlined"
+                      color="primary"
+                      onClick={() => updateTheatre(theatre._id)}
+                    >
+                      Update
+                    </Button>
+                    <Button
+                      variant="outlined"
+                      color="secondary"
+                      onClick={() => deleteTheatre(theatre._id)}
+                    >
+                      Delete
+                    </Button>
+                  </Stack>
+
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
                     sx={{
-                      backgroundColor:
-                        theatre.showtimes && theatre.showtimes.length > 0
-                          ? "primary.main"
-                          : undefined,
-                      marginRight: 1,
-                      color: "white",
-                      "&.Mui-disabled": {
-                        backgroundColor: "primary.main",
-                        color: "white",
-                        opacity: 0.8,
-                      },
+                      display: theatre.showtimes && theatre.showtimes.length > 0 ? "inline-flex" : "none",
                     }}
                   >
-                    Update
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={() => deleteTheatre(theatre._id)}
-                  >
-                    Delete
-                  </Button>
+                    Linked to showtimes, no action
+                  </Typography>
                 </TableCell>
               </TableRow>
             ))}

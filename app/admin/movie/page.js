@@ -290,37 +290,35 @@ export default function Component() {
                     <TableCell>{movie.genre}</TableCell>
                     <TableCell>{movie.duration}</TableCell>
                     <TableCell>{movie.cast}</TableCell>
-                    <TableCell sx={{ width: '300px' }}>
-                      <Button
-                        variant="outlined"
-                        color="primary"
-                        onClick={() => updateMovie(movie._id)}
+                    <TableCell>
+                      <Stack spacing={1} direction={"row"} sx={{
+                        display: movie.showtimes && movie.showtimes.length > 0 ? "none" : "inline-flex",
+                      }}>
+                        <Button
+                          variant="outlined"
+                          color="primary"
+                          onClick={() => updateMovie(movie._id)}
+                        >
+                          Update
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          color="secondary"
+                          onClick={() => deleteMovie(movie._id)}
+                        >
+                          Delete
+                        </Button>
+                      </Stack>
+
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
                         sx={{
-                          marginRight: 1,
+                          display: movie.showtimes && movie.showtimes.length > 0 ? "inline-flex" : "none",
                         }}
                       >
-                        Update
-                      </Button>
-                      <Button
-                        variant="outlined"
-                        color="secondary"
-                        onClick={() => deleteMovie(movie._id)}
-                        disabled={movie.showtimes && movie.showtimes.length > 0}
-                        sx={{
-                          backgroundColor:
-                            movie.showtimes && movie.showtimes.length > 0
-                              ? "secondary.main"
-                              : undefined,
-                          color: "white",
-                          "&.Mui-disabled": {
-                            backgroundColor: "secondary.main",
-                            color: "white",
-                            opacity: 0.8,
-                          },
-                        }}
-                      >
-                        Delete
-                      </Button>
+                        Linked to showtimes, no action
+                      </Typography>
                     </TableCell>
                   </TableRow>
                 ))}
