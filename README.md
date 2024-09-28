@@ -2,11 +2,13 @@
 
 # Team Members
 * [Myo Myat Min](https://github.com/MyoMyatMin)
-* [Ye Myo Moe](https://github.com/YeMyat144)
+* [Ye Myat Moe](https://github.com/YeMyat144)
 * [Han Htet Aung](https://github.com/hanhtetaung)
 
 # Project Description
 Ticket Tango is an online system for booking cinema tickets, aimed at simplifying the process of browsing, selecting, and purchasing tickets. It eliminates the need for in-person bookings or complicated third-party services by providing a user-friendly web application that allows users to easily access movie listings, choose showtimes, and reserve seats. The application consists of two primary interfaces: an admin dashboard and a user interface.
+
+URL - https://ticket-tango.vercel.app/
 
 ## Admin Features
 * Manage theatres (create, edit, delete) if not linked to any showtime.
