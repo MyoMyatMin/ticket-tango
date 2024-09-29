@@ -10,6 +10,8 @@ Ticket Tango is an online system for booking cinema tickets, aimed at simplifyin
 
 URL - https://ticket-tango.vercel.app/
 
+YouTube Demo - [YouTube Demo](https://www.youtube.com/watch?v=HkhgxPOYAtg)
+
 ## Admin Features
 * Manage theatres (create, edit, delete) if not linked to any showtime.
 * Manage movies (create, edit, delete) if not linked to any showtime.
